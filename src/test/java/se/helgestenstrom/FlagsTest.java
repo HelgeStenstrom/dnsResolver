@@ -1,7 +1,8 @@
-import org.junit.jupiter.api.Test;
-import se.helgestenstrom.Flags;
+package se.helgestenstrom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 class FlagsTest {
 

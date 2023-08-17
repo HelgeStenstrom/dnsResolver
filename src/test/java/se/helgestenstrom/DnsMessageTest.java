@@ -1,13 +1,13 @@
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import se.helgestenstrom.DnsMessage;
-import se.helgestenstrom.Flags;
-import se.helgestenstrom.Id;
+package se.helgestenstrom;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class DnsMessageTest {
 
@@ -77,5 +77,21 @@ class DnsMessageTest {
 
         // Verify
         assertEquals(expected, message);
+    }
+
+    @Test
+    void byteArray() {
+        // Setup
+        Id id = new Id(22);
+        DnsMessage dnsMessage = new DnsMessage(id, new Flags(true), "abc");
+
+        // Exercise
+        byte[] bytes = dnsMessage.bytes();
+
+        // Verify a few values in the byte array
+        assertEquals(0, bytes[0]);
+        assertEquals(22, bytes[1]);
+        assertEquals(1, bytes[bytes.length-1]);
+
     }
 }

@@ -1,5 +1,7 @@
 package se.helgestenstrom;
 
+import java.util.HexFormat;
+
 /**
  * A DNS message, as described by RFC 1035, section 4, and as required by this exercise. (See the README.md file)
  */
@@ -36,5 +38,16 @@ public class DnsMessage {
 
         return id.hex() + flags.hex()
                 + question + answer + authority + additional + new DomainName(domain).hex() + queryType + queryClass;
+    }
+
+    /**
+     * @return byte array corresponding to the DnsMessage
+     */
+    public byte[] bytes() {
+        var toBeConvertedToByteArray = hex();
+
+        return HexFormat.of().parseHex(toBeConvertedToByteArray);
+
+
     }
 }

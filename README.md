@@ -73,3 +73,8 @@ String: 00160100000100000000000003646e7306676f6f676c6503636f6d0000010001
   - 6f: o
   - 6d: m
 - 00: end marker
+
+# Creating a UDP socket
+
+Is this application a server or a client? I think it's a client.
+
