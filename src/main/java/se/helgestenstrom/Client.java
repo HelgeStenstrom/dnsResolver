@@ -6,6 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Test application
@@ -18,7 +22,7 @@ public class Client {
 
     /**
      * @param server a DNS server to connect to,
-     * @throws SocketException sometimes
+     * @throws SocketException      sometimes
      * @throws UnknownHostException sometimes
      */
     public Client(String server) throws SocketException, UnknownHostException {
@@ -39,9 +43,32 @@ public class Client {
         int port = 53;
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
         socket.send(packet);
-        socket.receive(packet);
-        return new String(packet.getData(), 0, packet.getLength());
 
+        byte[] receiveData = new byte[1024];
+        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+        socket.receive(receivePacket);
+
+        byte[] bytes = bytesOf(receivePacket);
+        return hexString(bytes);
+
+    }
+
+    private byte[] bytesOf(DatagramPacket receivePacket) {
+        int length = receivePacket.getLength();
+        byte[] data = receivePacket.getData();
+
+        return Arrays.copyOfRange(data, 0, length);
+    }
+
+    private String hexString(byte[] data) {
+        var buffer = ByteBuffer.wrap(data);
+
+        return Stream.generate(buffer::get)
+                .limit(buffer.capacity())
+                .map(b -> String.format("%02x", b))
+                .limit(data.length)
+                .collect(Collectors.joining());
     }
 
     /**
