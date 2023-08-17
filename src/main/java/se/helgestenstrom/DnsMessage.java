@@ -24,6 +24,13 @@ public class DnsMessage {
         this.domain = domain;
     }
 
+    public static DnsMessage from(String hexEncoded) {
+        String idPart = hexEncoded.substring(0, 4);
+        int numId = Integer.parseInt(idPart, 16);
+        Id id = new Id(numId);
+        return new DnsMessage(id, new Flags(true), "example.com");
+    }
+
     /**
      * @return The DNS message as a hex string, representing bytes to be sent
      */
@@ -49,5 +56,9 @@ public class DnsMessage {
         return HexFormat.of().parseHex(toBeConvertedToByteArray);
 
 
+    }
+
+    public int id() {
+        return id.id();
     }
 }

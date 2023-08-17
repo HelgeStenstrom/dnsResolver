@@ -12,4 +12,8 @@ public class Id implements Hex {
     public String hex() {
         return String.format("%04x", number);
     }
+
+    public int id() {
+        return number;
+    }
 }

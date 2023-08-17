@@ -94,4 +94,13 @@ class DnsMessageTest {
         assertEquals(1, bytes[bytes.length-1]);
 
     }
+
+    @Test
+    void idFromString() {
+        String encodedMessage = "00160100000100000000000003646e7306676f6f676c6503636f6d0000010001";
+        // 0x0016 = dec 22.
+        DnsMessage dm = DnsMessage.from(encodedMessage);
+        assertEquals(22, dm.id());
+
+    }
 }
