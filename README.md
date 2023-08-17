@@ -23,7 +23,7 @@ Which would give us the following (hex) 00160100000100000000000003646e7306676f6f
 - 0016: id (2 bytes), dec 22 = hex 0016
 - 0100: flags (2 bytes)
 - 0001: questions (2 bytes)
-- 0000: answer resorce records
+- 0000: answer resource records
 - 0000: authority resource records
 - 0000: additional resource records
 - 03646e7306676f6f676c6503636f6d00: encoded byte string for the question
