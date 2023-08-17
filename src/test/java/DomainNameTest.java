@@ -2,20 +2,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import se.helgestenstrom.Encoded;
+import se.helgestenstrom.DomainName;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EncodedTest {
+class DomainNameTest {
 
     @Test
     void hex() {
 
         String raw = "dns.google.com";
 
-        var e = new Encoded(raw);
+        var e = new DomainName(raw);
 
         String h = e.hex();
 
@@ -34,7 +34,7 @@ class EncodedTest {
     @MethodSource("varyRaw")
     void tst(String raw, String encoded) {
 
-        var e = new Encoded(raw);
+        var e = new DomainName(raw);
 
         assertEquals(encoded, e.hex());
     }

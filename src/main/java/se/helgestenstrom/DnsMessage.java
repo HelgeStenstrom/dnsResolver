@@ -1,20 +1,31 @@
 package se.helgestenstrom;
 
+/**
+ * A DNS message, as described by RFC 1035, section 4, and as required by this exercise. (See the README.md file)
+ */
 public class DnsMessage {
 
 
-    private final String host;
+    private final String domain;
     private final Id id;
     private final Flags flags;
 
 
-    public DnsMessage(Id id, Flags flags, String host) {
+    /**
+     * @param id Numerical ID of the message. Any integer in the range 0 to 255.
+     * @param flags Represents the second row of the table of RFC 1035, section 4.1.1
+     * @param domain for a dns host
+     */
+    public DnsMessage(Id id, Flags flags, String domain) {
         this.id = id;
         this.flags = flags;
-        this.host = host;
+        this.domain = domain;
     }
 
-    public String message() {
+    /**
+     * @return The DNS message as a hex string, representing bytes to be sent
+     */
+    public String hex() {
 
         String question = "0001";
         String answer = "0000";
@@ -24,6 +35,6 @@ public class DnsMessage {
         String queryClass = "0001";
 
         return id.hex() + flags.hex()
-                + question + answer + authority + additional + new Encoded(host).hex() + queryType + queryClass;
+                + question + answer + authority + additional + new DomainName(domain).hex() + queryType + queryClass;
     }
 }

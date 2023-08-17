@@ -28,7 +28,7 @@ class DnsMessageTest {
         var dnsMessage = new DnsMessage(id, flags, "dns.google.com");
 
         // Exercise
-        var message = dnsMessage.message();
+        var message = dnsMessage.hex();
 
         // Verify
         assertEquals(expected, message);
@@ -50,7 +50,7 @@ class DnsMessageTest {
         var dnsMessage = new DnsMessage(id, flags, "dns.google.com");
 
         // Exercise
-        var message = dnsMessage.message();
+        var message = dnsMessage.hex();
 
         // Verify
         assertEquals(expected, message);
@@ -73,7 +73,7 @@ class DnsMessageTest {
         var dnsMessage = new DnsMessage(id, flags, host);
 
         // Exercise
-        var message = dnsMessage.message();
+        var message = dnsMessage.hex();
 
         // Verify
         assertEquals(expected, message);

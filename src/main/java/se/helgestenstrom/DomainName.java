@@ -3,12 +3,18 @@ package se.helgestenstrom;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class Encoded implements Hex {
+/**
+ * Holds the QNAME from RFC 1035, section 4.1.2
+ */
+public class DomainName implements Hex {
     private final String[] parts;
 
-    public Encoded(String host) {
+    /**
+     * @param domain The domain name, including separator dots.
+     */
+    public DomainName(String domain) {
 
-        parts = host.split("\\.");
+        parts = domain.split("\\.");
     }
 
 
@@ -21,7 +27,7 @@ public class Encoded implements Hex {
         return collect + "00";
     }
 
-    public String partHex(String s) {
+    private String partHex(String s) {
         String preamble = String.format("%02x", s.length());
         String encoded = s.chars()
                 .mapToObj(c -> String.format("%02x", c))
