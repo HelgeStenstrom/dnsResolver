@@ -25,7 +25,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(idNo);
         Flags flags = new Flags(true);
-        var dnsMessage = new DnsMessage(id, flags);
+        var dnsMessage = new DnsMessage(id, flags, "dns.google.com");
 
         // Exercise
         var message = dnsMessage.message();
@@ -33,13 +33,13 @@ class DnsMessageTest {
         // Verify
         assertEquals(expected, message);
     }
+
     public static Stream<Arguments> varyDesiredRecursion() {
         return Stream.of(
                 Arguments.of(true, "00160100000100000000000003646e7306676f6f676c6503636f6d0000010001")
                 , Arguments.of(false, "00160000000100000000000003646e7306676f6f676c6503636f6d0000010001")
         );
     }
-
     @ParameterizedTest
     @MethodSource("varyDesiredRecursion")
     void messageStringWithDesiredRecursion(boolean desiredRecursion, String expected) {
@@ -47,7 +47,30 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(desiredRecursion);
-        var dnsMessage = new DnsMessage(id, flags);
+        var dnsMessage = new DnsMessage(id, flags, "dns.google.com");
+
+        // Exercise
+        var message = dnsMessage.message();
+
+        // Verify
+        assertEquals(expected, message);
+    }
+
+    public static Stream<Arguments> varyHost() {
+        return Stream.of(
+                Arguments.of("dns.google.com", "00160100000100000000000003646e7306676f6f676c6503636f6d0000010001")
+                , Arguments.of("abc", "001601000001000000000000036162630000010001")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("varyHost")
+    void messageforHost(String host, String expected) {
+
+        // Setup
+        Id id = new Id(22);
+        Flags flags = new Flags(true);
+        var dnsMessage = new DnsMessage(id, flags, host);
 
         // Exercise
         var message = dnsMessage.message();
