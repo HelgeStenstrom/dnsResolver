@@ -2,6 +2,9 @@
 
 My solution to https://codingchallenges.fyi/challenges/challenge-dns-resolver/ 
 
+Also read [RFC 1035, section 
+4](https://datatracker.ietf.org/doc/html/rfc1035#section-4).
+
 The message that you’re going to build will look like this:
 
 Two bytes of the id - you can generate a random number for this. I’ve used 22 in the example below.
@@ -18,10 +21,29 @@ Two bytes for the query class: 1 this time (it is defined in the RFC Section 3.2
 
 Which would give us the following (hex) 00160100000100000000000003646e7306676f6f676c6503636f6d0000010001
 
+To summarize, the parts are
+
+- Dns message
+  - Header
+    - defined by RFC 1035 [Section 4.1.1](https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1)
+    - Id
+    - Flags
+    - Number of questions
+    - Answer resource records
+    - Authority resource records
+    - Additional resource records
+  - Question
+    - defined by RFC 1035 [Section 
+      4.1.2](https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.2)
+  - Message
+    - ?
+
 ## Generated string picked apart:
 
+String: 00160100000100000000000003646e7306676f6f676c6503636f6d0000010001
+
 - 0016: id (2 bytes), dec 22 = hex 0016
-- 0100: flags (2 bytes)
+- 0100: flags (2 bytes). The bit for Recursion Desired is set.
 - 0001: questions (2 bytes)
 - 0000: answer resource records
 - 0000: authority resource records
