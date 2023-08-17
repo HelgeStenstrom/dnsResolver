@@ -17,6 +17,7 @@ class DnsMessageTest {
                 Arguments.of(23, "00170100000100000000000003646e7306676f6f676c6503636f6d0000010001")
         );
     }
+
     @ParameterizedTest
     @MethodSource("varyId")
     void messageStringWithId(int idNo, String expected) {
