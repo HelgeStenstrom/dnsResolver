@@ -9,8 +9,7 @@ public class DnsMessage {
 
 
     private final String domain;
-    private final Id id;
-    private final Flags flags;
+    private final Header header;
 
 
     /**
@@ -19,8 +18,7 @@ public class DnsMessage {
      * @param domain for a dns host
      */
     public DnsMessage(Id id, Flags flags, String domain) {
-        this.id = id;
-        this.flags = flags;
+        header = new Header(id, flags);
         this.domain = domain;
     }
 
@@ -57,7 +55,7 @@ public class DnsMessage {
         String queryType = "0001";
         String queryClass = "0001";
 
-        return id.hex() + flags.hex()
+        return header.hex()
                 + question + answer + authority + additional + new DomainName(domain).hex() + queryType + queryClass;
     }
 
@@ -76,6 +74,6 @@ public class DnsMessage {
      * @return The numerical ID of the instance.
      */
     public int id() {
-        return id.id();
+        return header.id().id();
     }
 }
