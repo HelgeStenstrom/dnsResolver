@@ -26,7 +26,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(idNo);
         Flags flags = new Flags(true);
-        var dnsMessage = new DnsMessage(id, flags, "dns.google.com");
+        var dnsMessage = new DnsMessage(new Header(id, flags), new Question("dns.google.com", "0001", "0001"));
 
         // Exercise
         var message = dnsMessage.hex();
@@ -48,7 +48,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(desiredRecursion);
-        var dnsMessage = new DnsMessage(id, flags, "dns.google.com");
+        var dnsMessage = new DnsMessage(new Header(id, flags), new Question("dns.google.com", "0001", "0001"));
 
         // Exercise
         var message = dnsMessage.hex();
@@ -71,7 +71,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(true);
-        var dnsMessage = new DnsMessage(id, flags, host);
+        var dnsMessage = new DnsMessage(new Header(id, flags), new Question(host, "0001", "0001"));
 
         // Exercise
         var message = dnsMessage.hex();
@@ -84,7 +84,8 @@ class DnsMessageTest {
     void byteArray() {
         // Setup
         Id id = new Id(22);
-        DnsMessage dnsMessage = new DnsMessage(id, new Flags(true), "abc");
+        final Flags flags = new Flags(true);
+        DnsMessage dnsMessage = new DnsMessage(new Header(id, flags), new Question("abc", "0001", "0001"));
 
         // Exercise
         byte[] bytes = dnsMessage.bytes();

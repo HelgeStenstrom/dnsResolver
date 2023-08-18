@@ -8,18 +8,17 @@ import java.util.HexFormat;
 public class DnsMessage {
 
 
-    private final String domain;
     private final Header header;
+    private final Question question;
 
 
     /**
-     * @param id Numerical ID of the message. Any integer in the range 0 to 255.
-     * @param flags Represents the second row of the table of RFC 1035, section 4.1.1
-     * @param domain for a dns host
+     * @param header The Header of RFC 1035, section 4.1
+     * @param question The Question of RFC 1035, section 4.1
      */
-    public DnsMessage(Id id, Flags flags, String domain) {
-        header = new Header(id, flags);
-        this.domain = domain;
+    public DnsMessage(Header header, Question question) {
+        this.header = header;
+        this.question = question;
     }
 
     /**
@@ -30,7 +29,8 @@ public class DnsMessage {
         String idPart = hexEncoded.substring(0, 4);
         int numId = Integer.parseInt(idPart, 16);
         Id id = new Id(numId);
-        return new DnsMessage(id, new Flags(true), "example.com");
+        final Flags flags = new Flags(true);
+        return new DnsMessage(new Header(id, flags), new Question("example.com", "0001", "0001"));
     }
 
 
@@ -40,7 +40,9 @@ public class DnsMessage {
      */
     public static DnsMessage from(byte[] bytes) {
         int numId = bytes[0] << 8 | (bytes[1] & 0xff);
-        return new DnsMessage(new Id(numId), new Flags(true), "example.com");
+        final Id id = new Id(numId);
+        final Flags flags = new Flags(true);
+        return new DnsMessage(new Header(id, flags), new Question("example.com", "0001", "0001"));
     }
 
     /**
@@ -48,8 +50,7 @@ public class DnsMessage {
      */
     public String hex() {
 
-        return header.hex()
-                + new Question(domain).hex();
+        return header.hex() + question.hex();
     }
 
     /**

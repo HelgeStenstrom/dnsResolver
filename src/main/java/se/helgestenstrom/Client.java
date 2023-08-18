@@ -37,7 +37,9 @@ public class Client {
      */
     public String sendSomething(int numericalId) throws IOException {
 
-        var dnsMessage = new DnsMessage(new Id(numericalId), new Flags(true), "dns.google.com");
+        final Id id = new Id(numericalId);
+        final Flags flags = new Flags(true);
+        var dnsMessage = new DnsMessage(new Header(id, flags), new Question("dns.google.com", "0001", "0001"));
 
         byte[] buf = dnsMessage.bytes();
 
