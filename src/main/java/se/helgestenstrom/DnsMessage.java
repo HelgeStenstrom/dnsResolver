@@ -24,11 +24,25 @@ public class DnsMessage {
         this.domain = domain;
     }
 
+    /**
+     * @param hexEncoded String of hex characters that encodes a DnsMessage, as described in RFC 1035
+     * @return a {@link DnsMessage} created from the input
+     */
     public static DnsMessage from(String hexEncoded) {
         String idPart = hexEncoded.substring(0, 4);
         int numId = Integer.parseInt(idPart, 16);
         Id id = new Id(numId);
         return new DnsMessage(id, new Flags(true), "example.com");
+    }
+
+
+    /**
+     * @param bytes encodes a DnsMessage, as described in RFC 1035
+     * @return a {@link DnsMessage} created from the input
+     */
+    public static DnsMessage from(byte[] bytes) {
+        int numId = bytes[0] << 8 | (bytes[1] & 0xff);
+        return new DnsMessage(new Id(numId), new Flags(true), "example.com");
     }
 
     /**
@@ -58,6 +72,9 @@ public class DnsMessage {
 
     }
 
+    /**
+     * @return The numerical ID of the instance.
+     */
     public int id() {
         return id.id();
     }

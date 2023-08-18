@@ -2,6 +2,7 @@ package se.helgestenstrom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HexFormat;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -97,10 +98,21 @@ class DnsMessageTest {
 
     @Test
     void idFromString() {
-        String encodedMessage = "00160100000100000000000003646e7306676f6f676c6503636f6d0000010001";
+        String encodedMessage = "10020100000100000000000003646e7306676f6f676c6503636f6d0000010001";
         // 0x0016 = dec 22.
+        // 0x1002 = dec 4098.
         DnsMessage dm = DnsMessage.from(encodedMessage);
-        assertEquals(22, dm.id());
+        assertEquals(0x1002, dm.id());
+
+    }
+
+    @Test
+    void idFromByteArray() {
+        String encodedMessage = "10030100000100000000000003646e7306676f6f676c6503636f6d0000010001";
+        byte[] bytes = HexFormat.of().parseHex(encodedMessage);
+        // 0x1003 = dec 4099.
+        DnsMessage dm = DnsMessage.from(bytes);
+        assertEquals(0x1003, dm.id());
 
     }
 }
