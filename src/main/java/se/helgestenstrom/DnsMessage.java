@@ -48,11 +48,8 @@ public class DnsMessage {
      */
     public String hex() {
 
-        String queryType = "0001";
-        String queryClass = "0001";
-
         return header.hex()
-                 + new DomainName(domain).hex() + queryType + queryClass;
+                + new Question(domain).hex();
     }
 
     /**
