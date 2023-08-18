@@ -33,13 +33,29 @@ class DomainNameTest {
 
     @ParameterizedTest
     @MethodSource("varyRaw")
-    void tst(String raw, String encoded) {
+    void hexFromRaw(String raw, String encoded) {
 
         var e = new DomainName(raw);
 
         assertEquals(encoded, e.hex());
     }
 
+    @Test
+    void instanceFromHexEncoded() {
+
+        // Setup
+        String clearText = "abc.def";
+        DomainName domainName = new DomainName(clearText);
+        String hex = domainName.hex();
+
+        // Exercise
+        DomainName dn = DomainName.of(hex);
+
+        // Verify
+        assertEquals(clearText, dn.getName());
+
+
+    }
 
 
 
