@@ -21,8 +21,12 @@ public class Header implements Hex{
     /**
      * @return The ID of the message
      */
-    public Id id() {
+    public Id getId() {
         return id;
+    }
+
+    public Flags getFlags() {
+        return flags;
     }
 
     @Override

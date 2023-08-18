@@ -1,7 +1,5 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.HexFormat;
 import java.util.stream.Stream;
 
@@ -9,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DnsMessageTest {
 
@@ -100,11 +100,9 @@ class DnsMessageTest {
     @Test
     void idFromString() {
         String encodedMessage = "10020100000100000000000003646e7306676f6f676c6503636f6d0000010001";
-        // 0x0016 = dec 22.
-        // 0x1002 = dec 4098.
         DnsMessage dm = DnsMessage.from(encodedMessage);
         assertEquals(0x1002, dm.id());
-
+        assertEquals(0x1002, dm.getHeader().getId().id());
     }
 
     @Test
@@ -115,5 +113,16 @@ class DnsMessageTest {
         DnsMessage dm = DnsMessage.from(bytes);
         assertEquals(0x1003, dm.id());
 
+    }
+
+    @Test
+    void flagFromString() {
+        String encodedMessage = "10020100000100000000000003646e7306676f6f676c6503636f6d0000010001";
+        DnsMessage dm = DnsMessage.from(encodedMessage);
+        Header header = dm.getHeader();
+        Flags flags = header.getFlags();
+        assertNotNull(flags);
+
+        assertEquals(0x1002, header.getId().id());
     }
 }

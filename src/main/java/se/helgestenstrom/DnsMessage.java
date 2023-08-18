@@ -11,7 +11,6 @@ public class DnsMessage {
     private final Header header;
     private final Question question;
 
-
     /**
      * @param header The Header of RFC 1035, section 4.1
      * @param question The Question of RFC 1035, section 4.1
@@ -45,6 +44,10 @@ public class DnsMessage {
         return new DnsMessage(new Header(id, flags), new Question("example.com", "0001", "0001"));
     }
 
+    public Header getHeader() {
+        return header;
+    }
+
     /**
      * @return The DNS message as a hex string, representing bytes to be sent
      */
@@ -68,6 +71,6 @@ public class DnsMessage {
      * @return The numerical ID of the instance.
      */
     public int id() {
-        return header.id().id();
+        return header.getId().id();
     }
 }
