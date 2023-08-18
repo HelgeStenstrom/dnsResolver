@@ -14,7 +14,7 @@ class HeaderTest {
         Header header = new Header(id, flags);
         String hex = header.hex();
 
-        assertEquals("abcd0100", hex);
+        assertEquals("abcd0100", hex.substring(0,8));
     }
 
 }

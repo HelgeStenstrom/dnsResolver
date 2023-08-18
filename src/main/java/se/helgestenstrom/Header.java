@@ -27,6 +27,6 @@ public class Header implements Hex{
 
     @Override
     public String hex() {
-        return id.hex() + flags.hex();
+        return id.hex() + flags.hex() + new Counts().hex();
     }
 }
