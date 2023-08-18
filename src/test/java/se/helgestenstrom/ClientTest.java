@@ -1,7 +1,6 @@
 package se.helgestenstrom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -18,7 +17,8 @@ class ClientTest {
 
     @BeforeEach
     void setup() throws SocketException, UnknownHostException {
-        client = new Client("8.8.8.8");
+        String googleDnsServer = "8.8.8.8";
+        client = new Client(googleDnsServer);
     }
 
     @AfterEach
@@ -27,12 +27,12 @@ class ClientTest {
     }
 
     @Test
-    void sendSomething() throws IOException {
+    void sendAndReceive() throws IOException {
 
 
-        String returned = client.sendSomething();
+        String returned = client.sendSomething(0xabcd);
 
-        fail("test not done");
-        assertEquals("wrong", returned);
+        // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
+        assertEquals("abcd", returned.substring(0, 4));
     }
 }

@@ -33,10 +33,11 @@ public class Client {
     /**
      * @return the response from a DNS server
      * @throws IOException if there are problems
+     * @param numericalId the ID that should go out with the DNS message, and is expected to come back.
      */
-    public String sendSomething() throws IOException {
+    public String sendSomething(int numericalId) throws IOException {
 
-        var dnsMessage = new DnsMessage(new Id(22), new Flags(true), "dns.google.com");
+        var dnsMessage = new DnsMessage(new Id(numericalId), new Flags(true), "dns.google.com");
 
         byte[] buf = dnsMessage.bytes();
 
