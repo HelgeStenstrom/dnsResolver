@@ -28,7 +28,7 @@ public class DnsMessage {
         String idPart = hexEncoded.substring(0, 4);
         int numId = Integer.parseInt(idPart, 16);
         Id id = new Id(numId);
-        final Flags flags = new Flags(true);
+        final Flags flags = new Flags(hexEncoded.substring(4, 8));
         return new DnsMessage(new Header(id, flags), new Question("example.com", "0001", "0001"));
     }
 

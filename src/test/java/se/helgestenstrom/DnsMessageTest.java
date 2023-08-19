@@ -1,14 +1,15 @@
 package se.helgestenstrom;
 
-import java.util.HexFormat;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.HexFormat;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DnsMessageTest {
 
@@ -41,6 +42,7 @@ class DnsMessageTest {
                 , Arguments.of(false, "00160000000100000000000003646e7306676f6f676c6503636f6d0000010001")
         );
     }
+
     @ParameterizedTest
     @MethodSource("varyDesiredRecursion")
     void messageStringWithDesiredRecursion(boolean desiredRecursion, String expected) {
@@ -93,7 +95,7 @@ class DnsMessageTest {
         // Verify a few values in the byte array
         assertEquals(0, bytes[0]);
         assertEquals(22, bytes[1]);
-        assertEquals(1, bytes[bytes.length-1]);
+        assertEquals(1, bytes[bytes.length - 1]);
 
     }
 
@@ -125,4 +127,27 @@ class DnsMessageTest {
 
         assertEquals(0x1002, header.getId().id());
     }
+
+    @Test
+    //@Disabled("Test not done yet")
+    void decodeExampleString() {
+        var example = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
+
+        DnsMessage message = DnsMessage.from(example);
+
+        int id = message.id();
+        assertEquals(22, id);
+
+        Header header = message.getHeader();
+
+        Id id1 = header.getId();
+        assertEquals(22, id1.id());
+
+        Flags flags = header.getFlags();
+
+        String hex = flags.hex();
+        assertEquals("8080", hex);
+
+    }
+
 }

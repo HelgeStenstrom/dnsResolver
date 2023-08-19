@@ -1,10 +1,10 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FlagsTest {
 
@@ -58,5 +58,12 @@ class FlagsTest {
         assertEquals(hex, f.hex());
     }
 
+    @Test
+    void fromHex() {
+
+        Flags f = new Flags("abcd");
+
+        assertEquals("abcd", f.hex());
+    }
 
 }
