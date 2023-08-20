@@ -8,8 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.HexFormat;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DnsMessageTest {
 
@@ -129,11 +128,11 @@ class DnsMessageTest {
     }
 
     @Test
-    //@Disabled("Test not done yet")
+        //@Disabled("Test not done yet")
     void decodeExampleString() {
-        var example = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
 
-        DnsMessage message = DnsMessage.from(example);
+        String exampleMessage = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
+        DnsMessage message = DnsMessage.from(exampleMessage);
 
         int id = message.id();
         assertEquals(22, id);
@@ -145,8 +144,15 @@ class DnsMessageTest {
 
         Flags flags = header.getFlags();
 
-        String hex = flags.hex();
-        assertEquals("8080", hex);
+        assertEquals("8080", flags.hex());
+
+        assertAll("Counts in the header",
+                () -> assertEquals(0x0001, header.getQdCount()),
+                () -> assertEquals(0x0002, header.getAnCount()),
+                () -> assertEquals(0x0000, header.getNsCount()),
+                () -> assertEquals(0x0000, header.getArCount())
+        );
+
 
     }
 
