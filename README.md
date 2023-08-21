@@ -78,3 +78,6 @@ String: 00160100000100000000000003646e7306676f6f676c6503636f6d0000010001
 
 Is this application a server or a client? I think it's a client.
 
+# Further reading
+ * https://cabulous.medium.com/dns-message-how-to-read-query-and-response-message-cfebcb4fe817
+ * 

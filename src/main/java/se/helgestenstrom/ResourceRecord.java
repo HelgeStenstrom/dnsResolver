@@ -8,7 +8,7 @@ public class ResourceRecord implements Hex{
     private final DomainName name;
     private final TwoBytes type;
     private final TwoBytes rdClass;
-    private final TwoBytes ttl;
+    private final TwoBytes timeToLive;
     private final TwoBytes rdLength;
     private final TwoBytes rData;
 
@@ -19,7 +19,7 @@ public class ResourceRecord implements Hex{
         name = new DomainName("foobar");
         type = null;
         rdClass = null;
-        ttl = null;
+        timeToLive = null;
         rdLength = null;
         rData = null;
     }
