@@ -12,7 +12,7 @@ class ByteListTest {
     @Test
     void equality() {
 
-        List<Byte> bytes = List.of((byte) 65,(byte) 66,(byte) 67);
+        List<Integer> bytes = List.of( 65, 66, 67);
         ByteList bl1 =  new ByteList(bytes);
         ByteList bl2 =  new ByteList(bytes);
         assertEquals(bl1, bl2);
@@ -20,21 +20,21 @@ class ByteListTest {
     @Test
     void fromListOfBytes() {
 
-        List<Byte> bytes = List.of((byte) 65,(byte) 66,(byte) 67);
+        List<Integer> bytes = List.of( 65, 66, 67);
         ByteList bl1 =  new ByteList(bytes);
 
-        assertEquals((byte) 65, bl1.get(0));
-        assertEquals((byte) 66, bl1.get(1));
-        assertEquals((byte) 67, bl1.get(2));
+        assertEquals( 65, bl1.get(0));
+        assertEquals( 66, bl1.get(1));
+        assertEquals( 67, bl1.get(2));
     }
 
     @Test
     void fromHex() {
         ByteList bl1 = ByteList.of("414243");
 
-        assertEquals((byte) 65, bl1.get(0));
-        assertEquals((byte) 66, bl1.get(1));
-        assertEquals((byte) 67, bl1.get(2));
+        assertEquals( 65, bl1.get(0));
+        assertEquals( 66, bl1.get(1));
+        assertEquals( 67, bl1.get(2));
     }
 
     @Test

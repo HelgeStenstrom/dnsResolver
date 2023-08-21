@@ -6,13 +6,13 @@ import java.util.List;
 /**
  * Holds lists of bytes, can be created from a hex string
  */
-public class ByteList extends ArrayList<Byte> {
+public class ByteList extends ArrayList<Integer> {
 
 
     /**
      * @param bytes Prototype list
      */
-    public ByteList(List<Byte> bytes) {
+    public ByteList(List<Integer> bytes) {
         super(bytes);
     }
 
@@ -39,7 +39,7 @@ public class ByteList extends ArrayList<Byte> {
 
         for (int i = 0; i < hexString.length(); i += 2) {
             String hexPair = hexString.substring(i, i + 2);
-            byte byteValue = (byte) Integer.parseInt(hexPair, 16);
+            int byteValue =Integer.parseInt(hexPair, 16);
             byteList.add(byteValue);
         }
 
