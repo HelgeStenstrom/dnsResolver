@@ -21,7 +21,7 @@ public class Header implements Hex{
         this.id = id;
         this.flags = flags;
         qdCount = 1;
-        anCount = 2;
+        anCount = 20;
         nsCount = 0;
         arCount = 0;
     }

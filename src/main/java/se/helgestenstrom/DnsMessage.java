@@ -25,11 +25,9 @@ public class DnsMessage {
      * @return a {@link DnsMessage} created from the input
      */
     public static DnsMessage from(String hexEncoded) {
-        String idPart = hexEncoded.substring(0, 4);
-        int numId = Integer.parseInt(idPart, 16);
-        Id id = new Id(numId);
-        final Flags flags = new Flags(hexEncoded.substring(4, 8));
-        return new DnsMessage(new Header(id, flags), new Question("example.com", "0001", "0001"));
+        Header header = Header.fromHex(hexEncoded.substring(0, 24));
+        Question question = new Question("example.com", "0001", "0001");
+        return new DnsMessage(header, question);
     }
 
 

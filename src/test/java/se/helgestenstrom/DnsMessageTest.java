@@ -128,7 +128,6 @@ class DnsMessageTest {
     }
 
     @Test
-        //@Disabled("Test not done yet")
     void decodeExampleString() {
 
         String exampleMessage = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
