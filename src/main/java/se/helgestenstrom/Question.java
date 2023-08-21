@@ -6,6 +6,8 @@ package se.helgestenstrom;
 public class Question implements Hex {
 
     private final DomainName domainName;
+
+
     private final TwoBytes qClass;
     private final TwoBytes qType;
 
@@ -32,8 +34,11 @@ public class Question implements Hex {
      */
     private Question(String hexQuestionAndFollowingData) {
         domainName = DomainName.ofHex(hexQuestionAndFollowingData);
-        this.qClass = null;
-        this.qType = null;
+        int length = domainName.hex().length();
+        String typeString = hexQuestionAndFollowingData.substring(length, length + 4);
+        String classString = hexQuestionAndFollowingData.substring(length+4, length + 8);
+        this.qType = TwoBytes.of(typeString);
+        this.qClass = TwoBytes.of(classString);
     }
 
     /**
@@ -51,5 +56,14 @@ public class Question implements Hex {
 
     public DomainName getName() {
         return domainName;
+    }
+
+
+    public TwoBytes getQClass() {
+        return qClass;
+    }
+
+    public TwoBytes getQType() {
+        return qType;
     }
 }
