@@ -5,9 +5,9 @@ package se.helgestenstrom;
  */
 public class Question implements Hex {
 
-    private final String qType;
-    private final String qClass;
     private final DomainName domainName;
+    private final TwoBytes qClass;
+    private final TwoBytes qType;
 
     /**
      * @param qName usually a domain and host string, with dots.
@@ -22,9 +22,9 @@ public class Question implements Hex {
      * @param qClass   The QCLASS of the Question
      */
     public Question(String qName, String qType, String qClass) {
-        this.qType = qType;
-        this.qClass = qClass;
         domainName = new DomainName(qName);
+        this.qType = TwoBytes.of(qType);
+        this.qClass = TwoBytes.of(qClass);
     }
 
     /**
@@ -32,8 +32,8 @@ public class Question implements Hex {
      */
     private Question(String hexQuestionAndFollowingData) {
         domainName = DomainName.ofHex(hexQuestionAndFollowingData);
-        this.qType = null;
         this.qClass = null;
+        this.qType = null;
     }
 
     /**
@@ -46,7 +46,7 @@ public class Question implements Hex {
 
     @Override
     public String hex() {
-        return domainName.hex() + qType + qClass;
+        return domainName.hex() + qType.hex() + qClass.hex();
     }
 
     public DomainName getName() {
