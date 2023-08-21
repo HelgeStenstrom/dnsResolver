@@ -1,6 +1,7 @@
 package se.helgestenstrom;
 
 import java.util.HexFormat;
+import java.util.List;
 
 /**
  * A DNS message, as described by RFC 1035, section 4, and as required by this exercise. (See the README.md file)
@@ -9,15 +10,15 @@ public class DnsMessage {
 
 
     private final Header header;
-    private final Question question;
+    private final List<Question> questions;
 
     /**
      * @param header The Header of RFC 1035, section 4.1
-     * @param question The Question of RFC 1035, section 4.1
+     * @param questions zero or more Questions of RFC 1035, section 4.1
      */
-    public DnsMessage(Header header, Question question) {
+    public DnsMessage(Header header, List<Question> questions) {
         this.header = header;
-        this.question = question;
+        this.questions = questions;
     }
 
     /**
@@ -27,7 +28,7 @@ public class DnsMessage {
     public static DnsMessage from(String hexEncoded) {
         Header header = Header.fromHex(hexEncoded.substring(0, 24));
         Question question = new Question("example.com", "0001", "0001");
-        return new DnsMessage(header, question);
+        return new DnsMessage(header, List.of(question));
     }
 
 
@@ -39,7 +40,8 @@ public class DnsMessage {
         int numId = bytes[0] << 8 | (bytes[1] & 0xff);
         final Id id = new Id(numId);
         final Flags flags = new Flags(true);
-        return new DnsMessage(new Header(id, flags), new Question("example.com", "0001", "0001"));
+        final Question question = new Question("example.com", "0001", "0001");
+        return new DnsMessage(new Header(id, flags), List.of(question));
     }
 
     public Header getHeader() {
@@ -51,7 +53,7 @@ public class DnsMessage {
      */
     public String hex() {
 
-        return header.hex() + question.hex();
+        return header.hex() + questions.get(0).hex();
     }
 
     /**
@@ -70,5 +72,12 @@ public class DnsMessage {
      */
     public int id() {
         return header.getId().id();
+    }
+
+    /**
+     * @return list of the Questions in the DnsMessage
+     */
+    public List<Question> getQuestions() {
+        return questions;
     }
 }

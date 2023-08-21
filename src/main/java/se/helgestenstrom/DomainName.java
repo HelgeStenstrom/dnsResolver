@@ -25,7 +25,7 @@ public class DomainName implements Hex {
      *            according to the description of QNAME in RFC 1035, section 4.1.2
      * @return an instance
      */
-    public static DomainName of(String hex) {
+    public static DomainName ofHex(String hex) {
 
         byte[] bytes = HexFormat.of().parseHex(hex);
 

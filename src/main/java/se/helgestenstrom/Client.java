@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +40,8 @@ public class Client {
 
         final Id id = new Id(numericalId);
         final Flags flags = new Flags(true);
-        var dnsMessage = new DnsMessage(new Header(id, flags), new Question("dns.google.com", "0001", "0001"));
+        final Question question = new Question("dns.google.com", "0001", "0001");
+        var dnsMessage = new DnsMessage(new Header(id, flags), List.of(question));
 
         byte[] buf = dnsMessage.bytes();
 

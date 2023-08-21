@@ -6,11 +6,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HexFormat;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DnsMessageTest {
+
+    private final String exampleMessage = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
 
     public static Stream<Arguments> varyId() {
         return Stream.of(
@@ -26,7 +29,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(idNo);
         Flags flags = new Flags(true);
-        var dnsMessage = new DnsMessage(new Header(id, flags), new Question("dns.google.com", "0001", "0001"));
+        final Question question = new Question("dns.google.com", "0001", "0001");
+        var dnsMessage = new DnsMessage(new Header(id, flags), List.of(question));
 
         // Exercise
         var message = dnsMessage.hex();
@@ -49,7 +53,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(desiredRecursion);
-        var dnsMessage = new DnsMessage(new Header(id, flags), new Question("dns.google.com", "0001", "0001"));
+        final Question question = new Question("dns.google.com", "0001", "0001");
+        var dnsMessage = new DnsMessage(new Header(id, flags), List.of(question));
 
         // Exercise
         var message = dnsMessage.hex();
@@ -72,7 +77,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(true);
-        var dnsMessage = new DnsMessage(new Header(id, flags), new Question(host, "0001", "0001"));
+        final Question question = new Question(host, "0001", "0001");
+        var dnsMessage = new DnsMessage(new Header(id, flags), List.of(question));
 
         // Exercise
         var message = dnsMessage.hex();
@@ -86,7 +92,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         final Flags flags = new Flags(true);
-        DnsMessage dnsMessage = new DnsMessage(new Header(id, flags), new Question("abc", "0001", "0001"));
+        final Question abc = new Question("00", "0001", "0001");
+        DnsMessage dnsMessage = new DnsMessage(new Header(id, flags), List.of(abc));
 
         // Exercise
         byte[] bytes = dnsMessage.bytes();
@@ -130,7 +137,6 @@ class DnsMessageTest {
     @Test
     void decodeExampleString() {
 
-        String exampleMessage = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
         DnsMessage message = DnsMessage.from(exampleMessage);
 
         int id = message.id();
@@ -151,8 +157,16 @@ class DnsMessageTest {
                 () -> assertEquals(0x0000, header.getNsCount()),
                 () -> assertEquals(0x0000, header.getArCount())
         );
+    }
 
+    @Test
+    void questionsFromExampleString() {
 
+        DnsMessage message = DnsMessage.from(exampleMessage);
+
+        List<Question> questions =  message.getQuestions();
+
+        assertEquals(1, questions.size());
     }
 
 }

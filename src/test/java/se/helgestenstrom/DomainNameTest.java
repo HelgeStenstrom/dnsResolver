@@ -49,7 +49,7 @@ class DomainNameTest {
         String hex = domainName.hex();
 
         // Exercise
-        DomainName dn = DomainName.of(hex);
+        DomainName dn = DomainName.ofHex(hex);
 
         // Verify
         assertEquals(clearText, dn.getName());
