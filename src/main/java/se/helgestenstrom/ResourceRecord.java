@@ -6,12 +6,27 @@ package se.helgestenstrom;
 public class ResourceRecord implements Hex{
 
     private final DomainName name;
+    private final TwoBytes type;
+    private final TwoBytes rdClass;
+    private final TwoBytes ttl;
+    private final TwoBytes rdLength;
+    private final TwoBytes rData;
 
     /**
      * sadf
      */
-    public ResourceRecord() {
+    public ResourceRecord(String hex) {
         name = new DomainName("foobar");
+        type = null;
+        rdClass = null;
+        ttl = null;
+        rdLength = null;
+        rData = null;
+    }
+
+
+    public static ResourceRecord of(String hex) {
+        return null;
     }
 
     @Override

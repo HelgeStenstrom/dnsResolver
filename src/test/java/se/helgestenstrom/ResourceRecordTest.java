@@ -1,19 +1,18 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ResourceRecordTest {
 
     @Test
-    @Disabled("Test not done")
+    @Disabled("Must learn about name compression before this is implemented.")
     void foo() {
 
-        ResourceRecord resourceRecord = new ResourceRecord();
-        String hex = resourceRecord.hex();
-        assertEquals("foobar", hex);
+        String hexOfAnswers = "c00c0001000100000214000408080808c00c0001000100000214000408080404";
+
+        ResourceRecord resourceRecord = ResourceRecord.of(hexOfAnswers);
+
 
     }
 
