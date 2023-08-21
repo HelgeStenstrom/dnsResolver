@@ -1,5 +1,6 @@
 package se.helgestenstrom;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -167,6 +168,22 @@ class DnsMessageTest {
         List<Question> questions =  message.getQuestions();
 
         assertEquals(1, questions.size());
+        Question question = questions.get(0);
+        assertEquals("dns.google.com", question.getName().getName());
+    }
+
+    @Test
+    @Disabled("Test not done")
+    void questionTypeFromExampleString() {
+
+        DnsMessage message = DnsMessage.from(exampleMessage);
+
+        List<Question> questions =  message.getQuestions();
+
+        assertEquals(1, questions.size());
+        Question question = questions.get(0);
+        assertEquals("dns.google.com", question.getName().getName());
+        fail();
     }
 
 }

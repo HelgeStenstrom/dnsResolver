@@ -5,7 +5,6 @@ package se.helgestenstrom;
  */
 public class Question implements Hex {
 
-    private final String qNameHex;
     private final String qType;
     private final String qClass;
     private final DomainName domainName;
@@ -23,7 +22,6 @@ public class Question implements Hex {
      * @param qClass   The QCLASS of the Question
      */
     public Question(String qName, String qType, String qClass) {
-        this.qNameHex = qName;
         this.qType = qType;
         this.qClass = qClass;
         domainName = new DomainName(qName);
@@ -34,9 +32,8 @@ public class Question implements Hex {
      */
     private Question(String hexQuestionAndFollowingData) {
         domainName = DomainName.ofHex(hexQuestionAndFollowingData);
-        this.qNameHex = domainName.hex();
-        this.qType = "abcd";
-        this.qClass = "abcd";
+        this.qType = null;
+        this.qClass = null;
     }
 
     /**
@@ -49,10 +46,10 @@ public class Question implements Hex {
 
     @Override
     public String hex() {
-        return new DomainName(qNameHex).hex() + qType + qClass;
+        return domainName.hex() + qType + qClass;
     }
 
     public DomainName getName() {
-        return new DomainName("dummy");
+        return domainName;
     }
 }

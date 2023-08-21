@@ -27,7 +27,8 @@ public class DnsMessage {
      */
     public static DnsMessage from(String hexEncoded) {
         Header header = Header.fromHex(hexEncoded.substring(0, 24));
-        Question question = new Question("example.com", "0001", "0001");
+        String restOfHexEncoded = hexEncoded.substring(24);
+        Question question = Question.of(restOfHexEncoded);
         return new DnsMessage(header, List.of(question));
     }
 
