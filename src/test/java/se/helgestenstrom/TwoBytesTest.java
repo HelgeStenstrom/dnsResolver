@@ -1,8 +1,9 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TwoBytesTest {
 
@@ -18,5 +19,17 @@ class TwoBytesTest {
         assertEquals(16, TwoBytes.of("0010").asInt());
     }
 
+    @Test
+    void fourChars() {
+        var toShort = "abc";
+        var rightLength = "abcd";
+        var toLong = "abcde";
+
+        assertThrows(IllegalArgumentException.class, () -> TwoBytes.of(toShort));
+        assertThrows(IllegalArgumentException.class, () -> TwoBytes.of(toLong));
+
+        // Doesn't throw
+        TwoBytes.of(rightLength);
+    }
 
 }

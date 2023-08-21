@@ -8,7 +8,9 @@ public class TwoBytes implements Hex{
     private final int value;
 
     private TwoBytes(String hex) {
-        assert hex.length() == 4;
+        if (hex.length() != 4) {
+            throw new IllegalArgumentException("4 hex character required, corresponding to 2 bytes.");
+        }
         value = Integer.parseInt(hex, 16);
     }
 
