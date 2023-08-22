@@ -1,11 +1,11 @@
 package se.helgestenstrom;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
 
 class ByteListTest {
 
@@ -51,7 +51,15 @@ class ByteListTest {
 
         assertEquals(128, exampleMessage.length());
         assertEquals(64, byteList.size());
+    }
 
+    @Test
+    void listToHex() {
+        String original = "010305be";
+        ByteList integers = ByteList.of(original);
+        String received = integers.hex();
+
+        assertEquals(original, received);
     }
 
 }
