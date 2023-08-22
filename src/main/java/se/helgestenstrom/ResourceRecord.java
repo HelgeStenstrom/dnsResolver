@@ -25,7 +25,7 @@ public class ResourceRecord implements Hex{
     }
 
 
-    public static ResourceRecord of(String hex) {
+    public static ResourceRecord of(String wholeMessage, int startIndex) {
         return null;
     }
 
