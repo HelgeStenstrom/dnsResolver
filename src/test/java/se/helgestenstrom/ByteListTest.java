@@ -37,6 +37,26 @@ class ByteListTest {
         assertEquals( 67, bl1.get(2));
     }
 
+//    @Test
+//    void canReplaceTwoBytes() {
+//        // Prototype test to mimic
+//        assertEquals("10ab", TwoBytes.of("10ab").hex());
+//        assertEquals("00ab", TwoBytes.of("00ab").hex());
+//
+//        ByteList byteList1 = ByteList.of("10ab");
+//        TwoBytes twoBytes1 = TwoBytes.of("10ab");
+//        int anInt = twoBytes1.asInt();
+//        int i = (byteList1.get(0) << 8) | byteList1.get(1);
+//        assertEquals(anInt, i);
+//        assertEquals(anInt, byteList1.u16());
+//    }
+
+    @Test
+    void u16() {
+        ByteList bl = new ByteList(List.of(0x23, 0xa7));
+        assertEquals(0x23a7, bl.u16());
+    }
+
     @Test
     void wrongLength() {
         assertThrows(IllegalArgumentException.class, () -> ByteList.of("123"));

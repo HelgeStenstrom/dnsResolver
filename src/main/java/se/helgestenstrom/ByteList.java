@@ -65,4 +65,12 @@ public class ByteList extends ArrayList<Integer> implements Hex {
 
         return result;
     }
+
+    /**
+     * Treat the first two ints of the list as MSB and LSB. Concatenate to a 16-bit word.
+     * @return an unsigned integer U16
+     */
+    public int u16() {
+        return (this.get(0) << 8) | this.get(1);
+    }
 }
