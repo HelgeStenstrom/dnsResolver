@@ -123,8 +123,6 @@ class DomainNameTest {
 
         // Verify
         assertEquals(name2, domainName.getName());
-
-
     }
 
     private ByteList concatLists(ByteList... lists) {

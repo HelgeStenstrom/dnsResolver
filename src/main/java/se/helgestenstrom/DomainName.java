@@ -1,11 +1,8 @@
 package se.helgestenstrom;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HexFormat;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Holds the QNAME from RFC 1035, section 4.1.2
@@ -27,23 +24,45 @@ public class DomainName implements Hex {
      */
     public static DomainName ofHex(String hex) {
 
-        byte[] bytes = HexFormat.of().parseHex(hex);
+        List<Integer> bytes = toList(HexFormat.of().parseHex(hex));
 
+        return of(bytes);
+    }
+
+    static DomainName of(List<Integer> bytes) {
         var pointer = 0;
 
-        var partLength = bytes[pointer];
+        int partLength = bytes.get(pointer);
         List<String> collector = new ArrayList<>();
         while (partLength != 0) {
-            var piece = Arrays.copyOfRange(bytes, pointer+1, pointer + 1 + partLength);
-            String s = new String(piece, StandardCharsets.US_ASCII);
-            collector.add(s);
+
+            var piece = bytes.subList(pointer + 1, pointer + 1 + partLength);
+            var collect = piece.stream()
+                    .map(c -> (char) c.intValue())
+                    .map(Object::toString)
+                    .collect(Collectors.joining());
+
+            collector.add(collect);
             pointer += partLength+1;
-            partLength = bytes[pointer];
+            partLength = bytes.get(pointer);
         }
 
         String collect = String.join(".", collector);
 
         return new DomainName(collect);
+    }
+
+    /**
+     * Conversion method suggested by ChatGPT. Arrays.asList() doesn't seem to work in this case.
+     * @param bytes The byte array to be converted
+     * @return The corresponding list of integers.
+     */
+    private static List<Integer> toList(byte[] bytes) {
+
+        return IntStream
+                .range(0, bytes.length)
+                .mapToObj(i -> bytes[i] & 0xFF)
+                .toList();
     }
 
     /**
@@ -53,8 +72,7 @@ public class DomainName implements Hex {
      */
     public static DomainName of(ByteList byteList, int offset) {
         var partial = byteList.subList(offset, byteList.size());
-        String hex = partial.hex();
-        return DomainName.ofHex(hex);
+        return DomainName.of(partial);
     }
 
     /**

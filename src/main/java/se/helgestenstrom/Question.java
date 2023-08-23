@@ -33,7 +33,8 @@ public class Question implements Hex {
      * @param hexQuestionAndFollowingData Hexadecimal representation of a Question, + following data to be ignored.
      */
     private Question(String hexQuestionAndFollowingData) {
-        domainName = DomainName.ofHex(hexQuestionAndFollowingData);
+        ByteList byteList = ByteList.of(hexQuestionAndFollowingData);
+        domainName = DomainName.of(byteList);
         int length = domainName.hex().length();
         String typeString = hexQuestionAndFollowingData.substring(length, length + 4);
         String classString = hexQuestionAndFollowingData.substring(length+4, length + 8);
