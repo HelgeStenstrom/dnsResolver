@@ -71,6 +71,10 @@ public class DomainName implements Hex {
      * @return an instance of {@link DomainName}
      */
     public static DomainName of(ByteList byteList, int offset) {
+        var isPointer = byteList.pointerValue(offset);
+        if (isPointer.isPresent()) {
+            return DomainName.of(byteList, isPointer.get());
+        }
         var partial = byteList.subList(offset, byteList.size());
         return DomainName.of(partial);
     }

@@ -2,6 +2,7 @@ package se.helgestenstrom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,11 @@ public class ByteList extends ArrayList<Integer> implements Hex {
 
     }
 
+    boolean isPointer(int offset) {
+        var statusWord = subList(offset, offset + 2).u16();
+        return (statusWord & 0xc000) == 0xc000;
+    }
+
     @Override
     public String hex() {
         return this.stream()
@@ -72,5 +78,19 @@ public class ByteList extends ArrayList<Integer> implements Hex {
      */
     public int u16() {
         return (this.get(0) << 8) | this.get(1);
+    }
+
+    /**
+     * @param offset The index of the list where the pointer indicator is supposed to be.
+     * @return the pointer value, if any
+     */
+    public Optional<Integer> pointerValue(int offset) {
+
+        if (!(isPointer(offset))) {
+            return Optional.empty();
+        }
+
+        Integer value = ((this.get(offset) & 0x3f)<<8) | (this.get(offset+1) & 0xff);
+        return Optional.of(value);
     }
 }
