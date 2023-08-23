@@ -47,6 +47,30 @@ public class DomainName implements Hex {
     }
 
     /**
+     * @param byteList Sequence to be decoded into a {@link DomainName}
+     * @param offset Point in the sequence from which to start the decoding
+     * @return an instance of {@link DomainName}
+     */
+    public static DomainName of(ByteList byteList, int offset) {
+        var partial = byteList.subList(offset, byteList.size());
+        String hex = partial.hex();
+        return DomainName.ofHex(hex);
+    }
+
+    /**
+     * Creates a 2-byte pointer, to be used in names
+     * @param value offset to point to
+     * @return a 2-byte list.
+     */
+    public static ByteList pointerTo(int value) {
+        int msb = (value & 0xff00) >> 8;
+        int lsb = value & 0xff;
+        int pointerMarker = 0xc0;
+
+        return new ByteList(List.of(msb | pointerMarker, lsb));
+    }
+
+    /**
      * @return the name
      */
     public String getName() {

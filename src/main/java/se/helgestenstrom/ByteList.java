@@ -55,4 +55,14 @@ public class ByteList extends ArrayList<Integer> implements Hex {
                 .map(intValue -> String.format("%02x", intValue))
                 .collect(Collectors.joining());
     }
+
+    @Override
+    public ByteList subList(int fromIndex, int toIndex) {
+        List<Integer> subList =  super.subList(fromIndex, toIndex);
+        ByteList result = new ByteList();
+
+        result.addAll(subList);
+
+        return result;
+    }
 }

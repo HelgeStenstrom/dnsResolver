@@ -1,13 +1,14 @@
 package se.helgestenstrom;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DomainNameTest {
 
@@ -53,6 +54,92 @@ class DomainNameTest {
 
         // Verify
         assertEquals(clearText, dn.getName());
+    }
+
+    @Test
+    void instanceFromByteList() {
+
+        // Setup
+        String clearText = "abc.def";
+        ByteList byteList = encodedText(clearText);
+
+        // Exercise
+        DomainName dn = DomainName.of(byteList, 0);
+
+        // Verify
+        assertEquals(clearText, dn.getName());
+    }
+
+    @Test
+    void instanceFromByteListStartingMidway() {
+
+        // Setup
+        String clearText = "abc.def";
+        ByteList containsTheName = encodedText(clearText);
+
+        ByteList ignoredPrefix = encodedText("to be ignored");
+        ByteList wholeList = concatLists(ignoredPrefix, containsTheName);
+
+        int startingPoint = ignoredPrefix.size();
+
+        // Exercise
+        DomainName dn = DomainName.of(wholeList, startingPoint);
+
+        // Verify
+        assertEquals(clearText, dn.getName());
+    }
+
+    @Test
+    void pointerArithmetic() {
+
+        // Exercise
+        ByteList pair = DomainName.pointerTo(0x0105);
+
+        // Verify
+        assertEquals(2, pair.size());
+        Integer msb = pair.get(0);
+        Integer lsb = pair.get(1);
+        assertEquals(0xc1, msb);
+        assertEquals(0x05, lsb);
+    }
+
+    @Test
+    @Disabled("Code not functional yet")
+    void twoNamesAndAPointer() {
+
+        // Setup
+        String name1 = "name1";
+        String name2 = "secondName";
+        ByteList encodedName1 = encodedText(name1);
+        ByteList encodedName2 = encodedText(name2);
+        // Define a pointer to name2. It starts at the index that is the size of name1.
+        var pointTo = encodedName1.size();
+        int startingPoint = encodedName1.size() + encodedName2.size();
+
+        ByteList wholeList = concatLists(encodedName1, encodedName2, DomainName.pointerTo(pointTo));
+
+        // Exercise
+        DomainName domainName = DomainName.of(wholeList, startingPoint);
+
+        // Verify
+        assertEquals(name2, domainName.getName());
+
+
+    }
+
+    private ByteList concatLists(ByteList... lists) {
+        ByteList wholeList = new ByteList();
+        for (var list : lists) {
+            wholeList.addAll(list);
+        }
+        return wholeList;
+    }
+
+
+    private ByteList encodedText(String clearText) {
+        DomainName domainName = new DomainName(clearText);
+        String hex = domainName.hex();
+        return ByteList.of(hex);
     }
 
     /*
