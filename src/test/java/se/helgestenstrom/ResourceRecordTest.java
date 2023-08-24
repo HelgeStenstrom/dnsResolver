@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ResourceRecordTest {
@@ -15,7 +14,7 @@ class ResourceRecordTest {
      * See <a href="https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.4"> Message compression</a>
      */
     @Test
-    @Disabled("Must learn about name compression before this is implemented.")
+//    @Disabled("Must learn about name compression before this is implemented.")
     void foo() {
 
         String hexOfAnswers = "c00c0001000100000214000408080808c00c0001000100000214000408080404";
@@ -49,6 +48,7 @@ class ResourceRecordTest {
 
         var integers1 = integers.subList(offset, integers.size());
         String string = getString(integers1);
+        DomainName domainName = DomainName.of(integers1, 0);
 
         fail("test not done");
         assertEquals(2, 1 + 3, "Test not done");
