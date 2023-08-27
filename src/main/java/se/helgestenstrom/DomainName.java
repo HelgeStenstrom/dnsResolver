@@ -96,9 +96,13 @@ public class DomainName implements Hex {
      * @return the name
      */
     public String getName() {
-        return name;
+        return toString();
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 
     @Override
     public String hex() {

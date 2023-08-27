@@ -1,38 +1,39 @@
 package se.helgestenstrom;
 
-import java.util.Objects;
-
 /**
  * Collects answers
  */
 public class ResourceRecord implements Hex{
 
     private final DomainName name;
-    private final Object type;
-    private final Object rdClass;
-    private final Object timeToLive;
-    private final Object rdLength;
-    private final Object rData;
+    private final int type;
 
     /**
      * sadf
      */
-    public ResourceRecord(String hex) {
+    private ResourceRecord(String hex) {
         name = new DomainName(hex);
-        type = null;
-        rdClass = null;
-        timeToLive = null;
-        rdLength = null;
-        rData = null;
-
-        Objects.requireNonNull(type);
-        Objects.requireNonNull(rdClass);
-        Objects.requireNonNull(timeToLive);
-        Objects.requireNonNull(rdLength);
-        Objects.requireNonNull(rData);
+        this.type = -1; // Faulty, will be fixed later
     }
 
 
+    /**
+     * Construct an instance from properties
+     * @param domainName The name, including separator periods (if any)
+     * @param type a 2-octet list
+     */
+    public ResourceRecord(DomainName domainName, int type) {
+        this.name = domainName;
+        this.type = type;
+    }
+
+
+    /**
+     * Construct an instace from data
+     * @param wholeMessage A list of bytes of a DnsMessage
+     * @param startIndex The index the list, where the ResourceRecord begins
+     * @return an instance
+     */
     public static ResourceRecord of(String wholeMessage, int startIndex) {
         if (wholeMessage == null && startIndex== 17) {
             return new ResourceRecord("FOOBAR");
@@ -43,5 +44,13 @@ public class ResourceRecord implements Hex{
     @Override
     public String hex() {
         return name.hex();
+    }
+
+    public String getName() {
+        return this.name.getName();
+    }
+
+    public int getType() {
+        return this.type;
     }
 }
