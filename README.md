@@ -74,6 +74,33 @@ String: 00160100000100000000000003646e7306676f6f676c6503636f6d0000010001
   - 6d: m
 - 00: end marker
 
+## Names
+
+Domain names appears in two contexts. (probably)
+The first name is in the Question section. It consists of sections separated, and ends with a zero octet.
+In other words, each section starts with a length octet and continues with that number of octets.
+The last length octet is zero, so no octets follows. The octets that are not length octets are ascii codes.
+
+The number of Question sections is usually 1. It can be >1. Can it be zero?
+
+The other context is in the Resource Record format. This format is used in sections that follow the Question section.
+
+Names except the first one can contain a pointer to a previous name definition. Since no name precedes the first one,
+it can't use compression.
+
+A byte that potentially prepends ascii-bytes can be any of:
+- 0: marks the end of a name, prepends a zero-size section, a.k.a. no section 
+at all.
+- 1 - 63 (0x01 to 0x3f): 1 to 63 characters (bytes/octets) follows.
+- 192 = 0xC0 = 0b1100 0000 or higher: The 14 LSB of the 2-octet formed by 
+  this byte and the following, forms a pointer in the range 0 to 0x3FFF = 0 to 16383, although 0 doesn't make sense.
+
+The pointer refers to the stream/list of octets/bytes.
+
+The first pointer that makes sense is 12, since the header section is 12 bytes long,
+and the first question section starts after it.
+
+
 # Creating a UDP socket
 
 Is this application a server or a client? I think it's a client.
