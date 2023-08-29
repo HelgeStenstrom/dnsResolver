@@ -18,6 +18,20 @@ public class DomainName implements Hex {
     }
 
     /**
+     * @param byteList Sequence to be decoded into a {@link DomainName}
+     * @param offset Point in the sequence from which to start the decoding
+     * @return an instance of {@link DomainName}
+     */
+    public static DomainName of(ByteList byteList, int offset) {
+        var isPointer = byteList.pointerValue(offset);
+        if (isPointer.isPresent()) {
+            return DomainName.of(byteList, isPointer.get());
+        }
+        var partial = byteList.subList(offset, byteList.size());
+        return DomainName.of(partial);
+    }
+
+    /**
      * @param hex Hexadecimal representation to be converted to an instance,
      *            according to the description of QNAME in RFC 1035, section 4.1.2
      * @return an instance
@@ -29,7 +43,7 @@ public class DomainName implements Hex {
         return of(bytes);
     }
 
-    static DomainName of(List<Integer> bytes) {
+    private static DomainName of(List<Integer> bytes) {
         var pointer = 0;
 
         int partLength = bytes.get(pointer);
@@ -63,20 +77,6 @@ public class DomainName implements Hex {
                 .range(0, bytes.length)
                 .mapToObj(i -> bytes[i] & 0xFF)
                 .toList();
-    }
-
-    /**
-     * @param byteList Sequence to be decoded into a {@link DomainName}
-     * @param offset Point in the sequence from which to start the decoding
-     * @return an instance of {@link DomainName}
-     */
-    public static DomainName of(ByteList byteList, int offset) {
-        var isPointer = byteList.pointerValue(offset);
-        if (isPointer.isPresent()) {
-            return DomainName.of(byteList, isPointer.get());
-        }
-        var partial = byteList.subList(offset, byteList.size());
-        return DomainName.of(partial);
     }
 
     /**

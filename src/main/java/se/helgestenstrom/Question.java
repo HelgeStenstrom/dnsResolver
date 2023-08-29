@@ -11,16 +11,16 @@ public class Question implements Hex {
     private final ByteList clazz;
 
     /**
-     * @param qName usually a domain and host string, with dots.
-     *                 <p>
-     *                 A domain name represented as a sequence of labels, where
-     *                 each label consists of a length octet followed by that
-     *                 number of octets.  The domain name terminates with the
-     *                 zero length octet for the null label of the root.  Note
-     *                 that this field may be an odd number of octets; no
-     *                 padding is used.</p>
-     * @param qType    The QTYPE of the Question
-     * @param qClass   The QCLASS of the Question
+     * @param qName  usually a domain and host string, with dots.
+     *               <p>
+     *               A domain name represented as a sequence of labels, where
+     *               each label consists of a length octet followed by that
+     *               number of octets.  The domain name terminates with the
+     *               zero length octet for the null label of the root.  Note
+     *               that this field may be an odd number of octets; no
+     *               padding is used.</p>
+     * @param qType  The QTYPE of the Question
+     * @param qClass The QCLASS of the Question
      */
     public Question(String qName, String qType, String qClass) {
         domainName = new DomainName(qName);
@@ -35,13 +35,11 @@ public class Question implements Hex {
      */
     private Question(String hexQuestionAndFollowingData) {
         ByteList byteList = ByteList.of(hexQuestionAndFollowingData);
-        domainName = DomainName.of(byteList);
-        int length = domainName.hex().length();
-        String typeString = hexQuestionAndFollowingData.substring(length, length + 4);
-        String classString = hexQuestionAndFollowingData.substring(length+4, length + 8);
+        domainName = DomainName.of(byteList, 0);
+        int fromIndex = domainName.hex().length() / 2;
+        type = byteList.subList(fromIndex, fromIndex+2);
 
-        type = ByteList.of(typeString);
-        clazz = ByteList.of(classString);
+        clazz = byteList.subList(fromIndex + 2, fromIndex + 4);
     }
 
     /**
