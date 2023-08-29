@@ -41,21 +41,6 @@ class DomainNameTest {
     }
 
     @Test
-    void instanceFromHexEncoded() {
-
-        // Setup
-        String clearText = "abc.def";
-        DomainName domainName = new DomainName(clearText);
-        String hex = domainName.hex();
-
-        // Exercise
-        DomainName dn = DomainName.ofHex(hex);
-
-        // Verify
-        assertEquals(clearText, dn.getName());
-    }
-
-    @Test
     void instanceFromByteList() {
 
         // Setup
@@ -114,13 +99,17 @@ class DomainNameTest {
         var pointTo = encodedName1.size();
         int startingPoint = encodedName1.size() + encodedName2.size();
 
-        ByteList wholeList = concatLists(encodedName1, encodedName2, DomainName.pointerTo(pointTo));
+        ByteList pointerList = DomainName.pointerTo(pointTo);
+        ByteList wholeList = concatLists(encodedName1, encodedName2, pointerList);
 
         // Exercise
         DomainName domainName = DomainName.of(wholeList, startingPoint);
 
         // Verify
         assertEquals(name2, domainName.getName());
+        // Since nothing follows the pointer, we know that only the
+        // length of the pointer (2 bytes) is consumed.
+        assertEquals(pointerList.size(), domainName.consumes());
     }
 
     private ByteList concatLists(ByteList... lists) {

@@ -36,7 +36,7 @@ public class Question implements Hex {
     private Question(String hexQuestionAndFollowingData) {
         ByteList byteList = ByteList.of(hexQuestionAndFollowingData);
         domainName = DomainName.of(byteList, 0);
-        int fromIndex = domainName.hex().length() / 2;
+        int fromIndex = domainName.consumes();
         type = byteList.subList(fromIndex, fromIndex+2);
 
         clazz = byteList.subList(fromIndex + 2, fromIndex + 4);

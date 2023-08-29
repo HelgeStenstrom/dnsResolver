@@ -2,7 +2,6 @@ package se.helgestenstrom;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Holds the QNAME from RFC 1035, section 4.1.2
@@ -19,7 +18,7 @@ public class DomainName implements Hex {
 
     /**
      * @param byteList Sequence to be decoded into a {@link DomainName}
-     * @param offset Point in the sequence from which to start the decoding
+     * @param offset   Point in the sequence from which to start the decoding
      * @return an instance of {@link DomainName}
      */
     public static DomainName of(ByteList byteList, int offset) {
@@ -31,19 +30,8 @@ public class DomainName implements Hex {
         return DomainName.of(partial);
     }
 
-    /**
-     * @param hex Hexadecimal representation to be converted to an instance,
-     *            according to the description of QNAME in RFC 1035, section 4.1.2
-     * @return an instance
-     */
-    public static DomainName ofHex(String hex) {
 
-        List<Integer> bytes = toList(HexFormat.of().parseHex(hex));
-
-        return of(bytes);
-    }
-
-    private static DomainName of(List<Integer> bytes) {
+    private static DomainName of(ByteList bytes) {
         var pointer = 0;
 
         int partLength = bytes.get(pointer);
@@ -57,7 +45,7 @@ public class DomainName implements Hex {
                     .collect(Collectors.joining());
 
             collector.add(collect);
-            pointer += partLength+1;
+            pointer += partLength + 1;
             partLength = bytes.get(pointer);
         }
 
@@ -66,21 +54,10 @@ public class DomainName implements Hex {
         return new DomainName(collect);
     }
 
-    /**
-     * Conversion method suggested by ChatGPT. Arrays.asList() doesn't seem to work in this case.
-     * @param bytes The byte array to be converted
-     * @return The corresponding list of integers.
-     */
-    private static List<Integer> toList(byte[] bytes) {
-
-        return IntStream
-                .range(0, bytes.length)
-                .mapToObj(i -> bytes[i] & 0xFF)
-                .toList();
-    }
 
     /**
      * Creates a 2-byte pointer, to be used in names
+     *
      * @param value offset to point to
      * @return a 2-byte list.
      */
@@ -116,5 +93,15 @@ public class DomainName implements Hex {
         String preamble = String.format("%02x", s.length());
         String encoded = s.chars().mapToObj(c -> String.format("%02x", c)).collect(Collectors.joining());
         return preamble + encoded;
+    }
+
+    /**
+     * The number of consumed bytes depends on how the name is constructed.
+     * If it comes from a pointer only, only two bytes are consumed.
+     *
+     * @return the number of bytes in a ByteList representing this name, that is consumed
+     */
+    public int consumes() {
+        return hex().length() / 2;
     }
 }
