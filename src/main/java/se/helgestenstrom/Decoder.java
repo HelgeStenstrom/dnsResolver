@@ -20,6 +20,7 @@ public class Decoder {
 
     public Header getHeader() {
         Id id = new Id(getId());
-        return new Header(id, null);
+        int flags = encoded.u16(2);
+        return new Header(id, new Flags(flags));
     }
 }

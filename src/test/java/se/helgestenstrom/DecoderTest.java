@@ -2,6 +2,8 @@ package se.helgestenstrom;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
@@ -14,7 +16,7 @@ class DecoderTest {
     void idFromEncodedMessage() {
 
         // Setup
-        ByteList encodedWithId = encodeHeader(0x1234);
+        ByteList encodedWithId = encodeHeader(0x1234, 0, 0, 0, 0, 0);
 
         Decoder decoder = new Decoder(encodedWithId);
 
@@ -29,7 +31,7 @@ class DecoderTest {
     void idViaHeaderFromEncodedMessage() {
 
         // Setup
-        ByteList encodedWithId = encodeHeader(0x12ab);
+        ByteList encodedWithId = encodeHeader(0x12ab, 0, 0, 0, 0, 0);
 
         Decoder decoder = new Decoder(encodedWithId);
 
@@ -40,18 +42,42 @@ class DecoderTest {
         assertEquals(0x12ab, header.getId().id());
     }
 
-    private static ByteList encodeHeader(int id) {
+    @ParameterizedTest
+    @CsvSource({
+            "true, 0x8000",
+            "false,  0",
+    })
+    @DisplayName("ssdf")
+    void flagsViaHeader(boolean isResponse, int flags) {
+
+        // Setup
+        ByteList encodedWithFlags = encodeHeader(0, flags, 0, 0, 0, 0);
+        Decoder decoder = new Decoder(encodedWithFlags);
+
+        // Exercise
+        Header header = decoder.getHeader();
+
+        // Verify
+        assertEquals(isResponse, header.getFlags().isResponse());
+    }
+
+
+    private static ByteList encodeHeader(int id, int flags, int qdCount, int anCount, int nsCount, int arCount) {
         List<Integer> idPart = ByteList.fromInt(id);
-        List<Integer> bytes = List.of(
-                0x0, 0x0,
-                0x0, 0x0,
-                0x0, 0x0,
-                0x0, 0x0,
-                0x0, 0x0
-        );
+        ByteList flagsPart = ByteList.fromInt(flags);
+        ByteList qdCount1 = ByteList.fromInt(qdCount);
+        ByteList anCount1 = ByteList.fromInt(anCount);
+        ByteList nsCount1 = ByteList.fromInt(nsCount);
+        ByteList arCount1 = ByteList.fromInt(arCount);
+
+
         ByteList encodedWithId = new ByteList();
         encodedWithId.addAll( idPart);
-        encodedWithId.addAll( bytes);
+        encodedWithId.addAll(flagsPart);
+        encodedWithId.addAll(qdCount1);
+        encodedWithId.addAll(anCount1);
+        encodedWithId.addAll(nsCount1);
+        encodedWithId.addAll(arCount1);
         return encodedWithId;
     }
 

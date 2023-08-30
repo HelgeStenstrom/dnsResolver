@@ -26,6 +26,13 @@ public class Flags {
     }
 
     /**
+     * @param bitField a 16-bit integer representing the flags according to the spec.
+     */
+    public Flags(int bitField) {
+        this.bitField = bitField;
+    }
+
+    /**
      * @param hex The hexadecimal representation of the flags
      */
     public Flags(String hex) {
@@ -44,6 +51,14 @@ public class Flags {
         return (isResponse ? 1 : 0) << 15
                 | (isAuthoritative ? 1 : 0) << 10
                 | (recursionDesired ? 1 : 0) << 8;
+    }
+
+    public boolean isQuery() {
+        return !isResponse();
+    }
+
+    public boolean isResponse() {
+        return (bitField & 0x8000) !=0;
     }
 
     static class Builder {

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FlagsTest {
 
@@ -64,6 +64,27 @@ class FlagsTest {
         Flags f = new Flags("abcd");
 
         assertEquals("abcd", f.hex());
+    }
+
+    @Test
+    void isQueryFromInt() {
+        // QR is the MSBit
+        int responseNotQuery = 0x8000;
+        int queryNotResponse = 0x0;
+        Flags response = new Flags(responseNotQuery);
+        Flags query = new Flags(queryNotResponse);
+        assertAll(
+                () -> assertFalse(response.isQuery()),
+                () -> assertTrue(response.isResponse()),
+                () -> assertTrue(query.isQuery()),
+                () -> assertFalse(query.isResponse())
+        );
+
+//        assertFalse(new Flags(responseNotQuery).isQuery());
+//        assertTrue(new Flags(responseNotQuery).isResponse());
+//
+//        assertTrue(new Flags(queryNotResponse).isQuery());
+//        assertFalse(new Flags(queryNotResponse).isResponse());
     }
 
 }
