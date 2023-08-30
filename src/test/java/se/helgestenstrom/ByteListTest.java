@@ -41,7 +41,7 @@ class ByteListTest {
     @Test
     void u16() {
         ByteList bl = new ByteList(List.of(0x23, 0xa7));
-        assertEquals(0x23a7, bl.u16());
+        assertEquals(0x23a7, bl.u16(0));
     }
 
     @Test

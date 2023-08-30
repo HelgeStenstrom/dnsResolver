@@ -182,8 +182,8 @@ class DnsMessageTest {
 
         assertEquals(1, questions.size());
         Question question = questions.get(0);
-        assertEquals(1, question.getQType().u16());
-        assertEquals(1, question.getQClass().u16());
+        assertEquals(1, question.getQType().u16(0));
+        assertEquals(1, question.getQClass().u16(0));
 
     }
 

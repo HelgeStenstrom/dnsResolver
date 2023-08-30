@@ -51,7 +51,7 @@ public class ByteList extends ArrayList<Integer> implements Hex {
     }
 
     boolean isPointer(int offset) {
-        var statusWord = subList(offset, offset + 2).u16();
+        var statusWord = subList(offset, offset + 2).u16(0);
         return (statusWord & 0xc000) == 0xc000;
     }
 
@@ -75,9 +75,10 @@ public class ByteList extends ArrayList<Integer> implements Hex {
     /**
      * Treat the first two ints of the list as MSB and LSB. Concatenate to a 16-bit word.
      * @return an unsigned integer U16
+     * @param index index of the most significant byte of the returned value.
      */
-    public int u16() {
-        return (this.get(0) << 8) | this.get(1);
+    public int u16(int index) {
+        return (this.get(index) << 8) | this.get(index + 1);
     }
 
     /**

@@ -25,8 +25,8 @@ class QuestionTest {
 
         Question q = Question.of(hexQuestionAndFollowingData);
 
-        assertEquals(3, q.getQType().u16());
-        assertEquals(4, q.getQClass().u16());
+        assertEquals(3, q.getQType().u16(0));
+        assertEquals(4, q.getQClass().u16(0));
 
     }
 
