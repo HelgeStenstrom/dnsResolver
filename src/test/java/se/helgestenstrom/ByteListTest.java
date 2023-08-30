@@ -88,4 +88,23 @@ class ByteListTest {
         assertEquals(original, received);
     }
 
+    @Test
+    void shortListFromInt() {
+        int value = 0x1234;
+
+        ByteList bl = ByteList.fromInt(value);
+
+        ByteList expected = new ByteList(List.of(0x12, 0x34));
+        assertEquals(expected, bl);
+    }
+
+    @Test
+    void acceptOnly16bitInts() {
+
+        var computable = ByteList.fromInt(0xffff);
+        assertEquals(2, computable.size());
+        assertThrows(IllegalArgumentException.class, () -> ByteList.fromInt(-1), "negative not considered.");
+        assertThrows(IllegalArgumentException.class, () -> ByteList.fromInt(0x1ffff), "too large number");
+    }
+
 }

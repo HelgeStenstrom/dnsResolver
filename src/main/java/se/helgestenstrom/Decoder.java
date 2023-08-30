@@ -17,4 +17,9 @@ public class Decoder {
     public int getId() {
         return encoded.u16(0);
     }
+
+    public Header getHeader() {
+        Id id = new Id(getId());
+        return new Header(id, null);
+    }
 }

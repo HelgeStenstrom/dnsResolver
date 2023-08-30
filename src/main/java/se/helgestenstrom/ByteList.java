@@ -50,6 +50,20 @@ public class ByteList extends ArrayList<Integer> implements Hex {
 
     }
 
+    /**
+     * Creates a 2-cell list from a 16-bit number. Excessive bits are ignore.
+     * @param value to be converted to 2-byte list
+     * @return the list
+     */
+    public static ByteList fromInt(int value) {
+        if (value < 0 || value > 0xffff) {
+            throw new IllegalArgumentException("%d is outside permitted range 0 to 0xffff.".formatted(value));
+        }
+        var msb = (value & 0xff00) >> 8;
+        var lsb = value & 0xff;
+        return new ByteList(List.of(msb, lsb));
+    }
+
     boolean isPointer(int offset) {
         var statusWord = subList(offset, offset + 2).u16(0);
         return (statusWord & 0xc000) == 0xc000;
