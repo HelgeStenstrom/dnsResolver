@@ -16,27 +16,32 @@ public class Header implements Hex{
     /**
      * @param id A 16-bit identifier assigned by the program that generates any kind of query.
      * @param flags The second row of the RFC 1035 4.1.1  table
+     * @param qdCount the number of QD values
+     * @param anCount the number of AN values
+     * @param nsCount the number of NS values
+     * @param arCount the number of AR values
      */
-    public Header(Id id, Flags flags) {
+    public Header(Id id, Flags flags, int qdCount, int anCount, int nsCount, int arCount) {
         this.id = id;
         this.flags = flags;
-        qdCount = 1;
-        anCount = 20;
-        nsCount = 0;
-        arCount = 0;
+        this.qdCount = qdCount;
+        this.anCount = anCount;
+        this.nsCount = nsCount;
+        this.arCount = arCount;
     }
 
     private Header(String hex) {
-        this.id = new Id(parse16bits(hex, 0));
-        this.flags = new Flags(hex.substring(4, 8));
-        qdCount = parse16bits(hex, 8);
-        anCount = parse16bits(hex, 12);
-        nsCount = parse16bits(hex, 16);
-        arCount = parse16bits(hex, 20);
+        this(
+                new Id(parse16bits(hex, 0)),
+                new Flags(hex.substring(4, 8)),
+                parse16bits(hex, 8),
+                parse16bits(hex, 12),
+                parse16bits(hex, 16),
+                parse16bits(hex, 20));
 
     }
 
-    private int parse16bits(String hex, int startIndex) {
+    private static int parse16bits(String hex, int startIndex) {
         String idPart = hex.substring(startIndex, startIndex+4);
         return Integer.parseInt(idPart, 16);
     }

@@ -42,7 +42,7 @@ public class DnsMessage {
         final Id id = new Id(numId);
         final Flags flags = new Flags(true);
         final Question question = new Question("example.com", "0001", "0001");
-        return new DnsMessage(new Header(id, flags), List.of(question));
+        return new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
     }
 
     public Header getHeader() {

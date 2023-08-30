@@ -21,6 +21,10 @@ public class Decoder {
     public Header getHeader() {
         Id id = new Id(getId());
         int flags = encoded.u16(2);
-        return new Header(id, new Flags(flags));
+        int qdCount = encoded.u16(4);
+        int anCount = encoded.u16(6);
+        int nsCount = encoded.u16(8);
+        int arCount = encoded.u16(10);
+        return new Header(id, new Flags(flags), qdCount, anCount, nsCount, arCount);
     }
 }

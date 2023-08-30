@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DecoderTest {
@@ -47,7 +48,7 @@ class DecoderTest {
             "true, 0x8000",
             "false,  0",
     })
-    @DisplayName("ssdf")
+    @DisplayName("Flags via the header")
     void flagsViaHeader(boolean isResponse, int flags) {
 
         // Setup
@@ -59,6 +60,25 @@ class DecoderTest {
 
         // Verify
         assertEquals(isResponse, header.getFlags().isResponse());
+    }
+
+    @Test
+    void countsViaTheHeader() {
+
+        // Setup
+        ByteList encodedWithFlags = encodeHeader(0, 0, 0x1001, 0x1002, 0x1003, 0x1004);
+        Decoder decoder = new Decoder(encodedWithFlags);
+
+        // Exercise
+        Header header = decoder.getHeader();
+
+        // Verify
+        assertAll(
+                () -> assertEquals(0x1001, header.getQdCount()),
+                () -> assertEquals(0x1002, header.getAnCount()),
+                () -> assertEquals(0x1003, header.getNsCount()),
+                () -> assertEquals(0x1004, header.getArCount())
+        );
     }
 
 
