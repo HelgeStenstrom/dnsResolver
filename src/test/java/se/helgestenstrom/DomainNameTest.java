@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -109,8 +110,28 @@ class DomainNameTest {
         assertEquals(name2, domainName.getName());
         // Since nothing follows the pointer, we know that only the
         // length of the pointer (2 bytes) is consumed.
+
+    }
+
+    @Test
+    void pointerConsumesTwoBytes() {
+        // Setup
+        int arbitraryLocation = 3;
+
+        ByteList firstPartOfMessage = new ByteList(List.of(11, 12, 13, 14, 15));
+        ByteList pointerList = DomainName.pointerTo(arbitraryLocation);
+        ByteList wholeMessage = concatLists(firstPartOfMessage, pointerList);
+
+        // Exercise
+        DomainName domainName = DomainName.of(wholeMessage, firstPartOfMessage.size());
+
+
+        // Verify
         assertEquals(pointerList.size(), domainName.consumes());
     }
+
+
+
 
     private ByteList concatLists(ByteList... lists) {
         ByteList wholeList = new ByteList();
