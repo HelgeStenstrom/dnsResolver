@@ -31,7 +31,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(idNo);
         Flags flags = new Flags(true);
-        final Question question = new Question("dns.google.com", "0001", "0001");
+        final Question question = new Question("dns.google.com", "0001", "0001", List.of("dns.google.com"));
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
 
         // Exercise
@@ -55,7 +55,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(desiredRecursion);
-        final Question question = new Question("dns.google.com", "0001", "0001");
+        final Question question = new Question("dns.google.com", "0001", "0001", List.of("dns.google.com"));
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
 
         // Exercise
@@ -79,7 +79,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(true);
-        final Question question = new Question(host, "0001", "0001");
+        final Question question = new Question(host, "0001", "0001", List.of(host));
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
 
         // Exercise
@@ -94,7 +94,7 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         final Flags flags = new Flags(true);
-        final Question abc = new Question("00", "0001", "0001");
+        final Question abc = new Question("00", "0001", "0001", List.of("00"));
         DnsMessage dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(abc));
 
         // Exercise

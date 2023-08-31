@@ -9,6 +9,8 @@ public class Question implements Hex {
 
     private final DomainName domainName;
 
+    private final List<String> labels;
+
     private final ByteList type;
     private final ByteList clazz;
 
@@ -23,9 +25,12 @@ public class Question implements Hex {
      *               padding is used.</p>
      * @param qType  The QTYPE of the Question
      * @param qClass The QCLASS of the Question
+     * @param labels A list of short strings, each called a label.
+     *               These normally make up the period-separated domain name.
      */
-    public Question(String qName, String qType, String qClass) {
+    public Question(String qName, String qType, String qClass, List<String> labels) {
         domainName = new DomainName(qName);
+        this.labels = labels;
 
         type = ByteList.of(qType);
 
@@ -38,8 +43,9 @@ public class Question implements Hex {
     private Question(String hexQuestionAndFollowingData) {
         ByteList byteList = ByteList.of(hexQuestionAndFollowingData);
         domainName = DomainName.of(byteList, 0);
+        labels = List.of("foobar");
         int fromIndex = domainName.consumes();
-        type = byteList.subList(fromIndex, fromIndex+2);
+        type = byteList.subList(fromIndex, fromIndex + 2);
 
         clazz = byteList.subList(fromIndex + 2, fromIndex + 4);
     }
@@ -71,6 +77,6 @@ public class Question implements Hex {
     }
 
     public List<String> getLabels() {
-        return List.of("a");
+        return labels;
     }
 }

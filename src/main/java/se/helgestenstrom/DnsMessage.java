@@ -41,7 +41,7 @@ public class DnsMessage {
         int numId = bytes[0] << 8 | (bytes[1] & 0xff);
         final Id id = new Id(numId);
         final Flags flags = new Flags(true);
-        final Question question = new Question("example.com", "0001", "0001");
+        final Question question = new Question("example.com", "0001", "0001", List.of("example.com"));
         return new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
     }
 
