@@ -81,6 +81,33 @@ class DecoderTest {
         );
     }
 
+    @Test
+    void oneQuestionSingleCharacterName() {
+
+        // Setup
+        int questionCount = 1;
+        ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
+
+        ByteList encodedName = new ByteList(List.of(1, (int) 'a', 0));
+        ByteList qType = new ByteList(List.of(0xab, 0xcd));
+        ByteList qClass = new ByteList(List.of(0x34, 0x56));
+        ByteList message = new ByteList()
+                .append(header, encodedName, qType, qClass);
+
+        Decoder decoder = new Decoder(message);
+
+        // Exercise
+        List<Question> questions = decoder.getQuestions();
+
+
+        // Verify
+        assertEquals(1, questions.size());
+        Question question = questions.get(0);
+        assertEquals(List.of("a"), question.getLabels());
+
+
+    }
+
 
     private static ByteList encodeHeader(int id, int flags, int qdCount, int anCount, int nsCount, int arCount) {
         List<Integer> idPart = ByteList.fromInt(id);

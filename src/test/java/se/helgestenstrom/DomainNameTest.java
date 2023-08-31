@@ -64,7 +64,7 @@ class DomainNameTest {
         ByteList containsTheName = encodedText(clearText);
 
         ByteList ignoredPrefix = encodedText("to be ignored");
-        ByteList wholeList = concatLists(ignoredPrefix, containsTheName);
+        ByteList wholeList = ByteList.concatLists(ignoredPrefix, containsTheName);
 
         int startingPoint = ignoredPrefix.size();
 
@@ -102,7 +102,7 @@ class DomainNameTest {
         int startingPoint = encodedName1.size() + encodedName2.size();
 
         ByteList pointerList = DomainName.pointerTo(pointTo);
-        ByteList wholeList = concatLists(encodedName1, encodedName2, pointerList);
+        ByteList wholeList = ByteList.concatLists(encodedName1, encodedName2, pointerList);
 
         // Exercise
         DomainName domainName = DomainName.of(wholeList, startingPoint);
@@ -123,24 +123,13 @@ class DomainNameTest {
 
         ByteList secondPart = encodedText("contains a name");
         ByteList pointerList = DomainName.pointerTo(firstPartOfMessage.size());
-        ByteList wholeMessage = concatLists(firstPartOfMessage, secondPart, pointerList);
+        ByteList wholeMessage = ByteList.concatLists(firstPartOfMessage, secondPart, pointerList);
 
         // Exercise
         DomainName domainName = DomainName.of(wholeMessage, firstPartOfMessage.size());
 
         // Verify
         assertEquals(pointerList.size(), domainName.consumes());
-    }
-
-
-
-
-    private ByteList concatLists(ByteList... lists) {
-        ByteList wholeList = new ByteList();
-        for (var list : lists) {
-            wholeList.addAll(list);
-        }
-        return wholeList;
     }
 
 

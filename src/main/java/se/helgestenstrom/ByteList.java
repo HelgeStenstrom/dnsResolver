@@ -64,6 +64,21 @@ public class ByteList extends ArrayList<Integer> implements Hex {
         return new ByteList(List.of(msb, lsb));
     }
 
+    static ByteList concatLists(ByteList... lists) {
+        ByteList wholeList = new ByteList();
+        for (var list : lists) {
+            wholeList.addAll(list);
+        }
+        return wholeList;
+    }
+
+     ByteList append(ByteList... lists) {
+         for (var list : lists) {
+            this.addAll(list);
+        }
+        return this;
+    }
+
     boolean isPointer(int offset) {
         var statusWord = subList(offset, offset + 2).u16(0);
         return (statusWord & 0xc000) == 0xc000;

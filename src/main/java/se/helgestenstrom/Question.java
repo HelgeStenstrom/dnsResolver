@@ -1,5 +1,7 @@
 package se.helgestenstrom;
 
+import java.util.List;
+
 /**
  * Holds one Question section, described in RFC 1035 4.1.2
  */
@@ -66,5 +68,9 @@ public class Question implements Hex {
 
     public ByteList getQType() {
         return type;
+    }
+
+    public List<String> getLabels() {
+        return List.of("a");
     }
 }

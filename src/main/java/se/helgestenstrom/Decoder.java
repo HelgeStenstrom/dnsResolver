@@ -1,5 +1,7 @@
 package se.helgestenstrom;
 
+import java.util.List;
+
 /**
  * Decodes a message and creates various items of domain types
  */
@@ -26,5 +28,9 @@ public class Decoder {
         int nsCount = encoded.u16(8);
         int arCount = encoded.u16(10);
         return new Header(id, new Flags(flags), qdCount, anCount, nsCount, arCount);
+    }
+
+    public List<Question> getQuestions() {
+        return List.of(new Question("theName", "1234", "5678"));
     }
 }
