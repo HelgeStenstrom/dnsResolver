@@ -24,7 +24,9 @@ public class DnsMessage {
     /**
      * @param hexEncoded String of hex characters that encodes a DnsMessage, as described in RFC 1035
      * @return a {@link DnsMessage} created from the input
+     * @deprecated because DnsMessage should not handle decoding.
      */
+    @Deprecated(forRemoval = true)
     public static DnsMessage from(String hexEncoded) {
         Header header = Header.fromHex(hexEncoded.substring(0, 24));
         String restOfHexEncoded = hexEncoded.substring(24);

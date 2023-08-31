@@ -53,7 +53,9 @@ public class Question implements Hex {
     /**
      * @param hexQuestionAndFollowingData Hexadecimal representation of a Question, + following data to be ignored.
      * @return an instance
+     * @deprecated because DnsMessage should not handle decoding.
      */
+    @Deprecated(forRemoval = true)
     public static Question of(String hexQuestionAndFollowingData) {
         return new Question(hexQuestionAndFollowingData);
     }

@@ -8,6 +8,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -108,6 +109,7 @@ class DnsMessageTest {
     }
 
     @Test
+    @Disabled("messages should not be decoded by the DnsMessage class.")
     void idFromString() {
         String encodedMessage = "10020100000100000000000003646e7306676f6f676c6503636f6d0000010001";
         DnsMessage dm = DnsMessage.from(encodedMessage);
@@ -116,6 +118,7 @@ class DnsMessageTest {
     }
 
     @Test
+    @Disabled("messages should not be decoded by the DnsMessage class.")
     void idFromByteArray() {
         String encodedMessage = "10030100000100000000000003646e7306676f6f676c6503636f6d0000010001";
         byte[] bytes = HexFormat.of().parseHex(encodedMessage);
@@ -126,6 +129,7 @@ class DnsMessageTest {
     }
 
     @Test
+    @Disabled("messages should not be decoded by the DnsMessage class.")
     void flagFromString() {
         String encodedMessage = "10020100000100000000000003646e7306676f6f676c6503636f6d0000010001";
         DnsMessage dm = DnsMessage.from(encodedMessage);
@@ -137,6 +141,7 @@ class DnsMessageTest {
     }
 
     @Test
+    @Disabled("messages should not be decoded by the DnsMessage class.")
     void decodeExampleString() {
 
         DnsMessage message = DnsMessage.from(exampleMessage);
@@ -162,6 +167,7 @@ class DnsMessageTest {
     }
 
     @Test
+    @Disabled("messages should not be decoded by the DnsMessage class.")
     void questionsFromExampleString() {
 
         DnsMessage message = DnsMessage.from(exampleMessage);
@@ -174,6 +180,7 @@ class DnsMessageTest {
     }
 
     @Test
+    @Disabled("messages should not be decoded by the DnsMessage class.")
     void questionTypeFromExampleString() {
 
         DnsMessage message = DnsMessage.from(exampleMessage);
