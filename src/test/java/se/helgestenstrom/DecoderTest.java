@@ -97,6 +97,7 @@ class DecoderTest {
                         0), List.of("a", "bcd"))
         );
     }
+
     @ParameterizedTest
     @MethodSource("varyName")
     void oneQuestionSomeNames(List<Integer> bytes, List<String> expected) {
@@ -195,9 +196,10 @@ class DecoderTest {
         // Setup
         String clearText = "abc.def";
         ByteList byteList = encodedText(clearText);
+        Decoder decoder = new Decoder(byteList);
 
         // Exercise
-        Name dn = Decoder.nameFrom(byteList, 0);
+        Name dn = decoder.nameFrom(0);
 
         // Verify
         assertEquals(clearText, dn.getValue());
@@ -214,9 +216,10 @@ class DecoderTest {
         ByteList wholeList = ByteList.concatLists(ignoredPrefix, containsTheName);
 
         int startingPoint = ignoredPrefix.size();
+        Decoder decoder = new Decoder(wholeList);
 
         // Exercise
-        Name dn = Decoder.nameFrom(wholeList, startingPoint);
+        Name dn = decoder.nameFrom(startingPoint);
 
         // Verify
         assertEquals(clearText, dn.getValue());
@@ -236,9 +239,10 @@ class DecoderTest {
 
         ByteList pointerList = Decoder.pointerTo(pointTo);
         ByteList wholeList = ByteList.concatLists(encodedName1, encodedName2, pointerList);
+        Decoder decoder = new Decoder(wholeList);
 
         // Exercise
-        Name name = Decoder.nameFrom(wholeList, startingPoint);
+        Name name = decoder.nameFrom(startingPoint);
 
         // Verify
         assertEquals(name2, name.getValue());

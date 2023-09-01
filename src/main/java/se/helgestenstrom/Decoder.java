@@ -23,43 +23,6 @@ public class Decoder {
     }
 
     /**
-     * @param byteList Sequence to be decoded into a {@link Name}
-     * @param offset   Point in the sequence from which to start the decoding
-     * @return an instance of {@link Name}
-     */
-    public static Name nameFrom(ByteList byteList, int offset) {
-        var isPointer = byteList.pointerValue(offset);
-        if (isPointer.isPresent()) {
-            return nameFrom(byteList, isPointer.get());
-        }
-        var partial = byteList.subList(offset, byteList.size());
-        return nameFrom(partial);
-    }
-
-    private static Name nameFrom(ByteList bytes) {
-        var pointer = 0;
-
-        int partLength = bytes.get(pointer);
-        List<String> collector = new ArrayList<>();
-        while (partLength != 0) {
-
-            var piece = bytes.subList(pointer + 1, pointer + 1 + partLength);
-            var collect = piece.stream()
-                    .map(c -> (char) c.intValue())
-                    .map(Object::toString)
-                    .collect(Collectors.joining());
-
-            collector.add(collect);
-            pointer += partLength + 1;
-            partLength = bytes.get(pointer);
-        }
-
-        String collect = String.join(".", collector);
-
-        return new Name(collect);
-    }
-
-    /**
      * Creates a 2-byte pointer, to be used in names
      *
      * @param value offset to point to
@@ -112,5 +75,13 @@ public class Decoder {
 
 
         return List.of(new Question(labels, "HardcodedName", "1234", "5678"));
+    }
+
+    /**
+     * @param startingPoint offset from start of whole message
+     * @return an instance of {@link Name}
+     */
+    public Name nameFrom(int startingPoint) {
+        return nameDecoder.nameFrom(encoded, startingPoint);
     }
 }
