@@ -9,14 +9,14 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DomainNameTest {
+class NameTest {
 
     @Test
     void hex() {
 
         String raw = "dns.google.com";
 
-        var e = new DomainName(raw);
+        var e = new Name(raw);
 
         String h = e.asList().hex();
 
@@ -35,89 +35,16 @@ class DomainNameTest {
     @MethodSource("varyRaw")
     void hexFromRaw(String raw, String encoded) {
 
-        var e = new DomainName(raw);
+        var e = new Name(raw);
 
         assertEquals(encoded, e.asList().hex());
     }
 
-    @Test
-    void instanceFromByteList() {
-
-        // Setup
-        String clearText = "abc.def";
-        ByteList byteList = encodedText(clearText);
-
-        // Exercise
-        DomainName dn = DomainName.of(byteList, 0);
-
-        // Verify
-        assertEquals(clearText, dn.getName());
-    }
-
-    @Test
-    void instanceFromByteListStartingMidway() {
-
-        // Setup
-        String clearText = "abc.def";
-        ByteList containsTheName = encodedText(clearText);
-
-        ByteList ignoredPrefix = encodedText("to be ignored");
-        ByteList wholeList = ByteList.concatLists(ignoredPrefix, containsTheName);
-
-        int startingPoint = ignoredPrefix.size();
-
-        // Exercise
-        DomainName dn = DomainName.of(wholeList, startingPoint);
-
-        // Verify
-        assertEquals(clearText, dn.getName());
-    }
-
-    @Test
-    void pointerArithmetic() {
-
-        // Exercise
-        ByteList pair = DomainName.pointerTo(0x0105);
-
-        // Verify
-        assertEquals(2, pair.size());
-        Integer msb = pair.get(0);
-        Integer lsb = pair.get(1);
-        assertEquals(0xc1, msb);
-        assertEquals(0x05, lsb);
-    }
-
-    @Test
-    void twoNamesAndAPointer() {
-
-        // Setup
-        String name1 = "name1";
-        String name2 = "secondName";
-        ByteList encodedName1 = encodedText(name1);
-        ByteList encodedName2 = encodedText(name2);
-        // Define a pointer to name2. It starts at the index that is the size of name1.
-        var pointTo = encodedName1.size();
-        int startingPoint = encodedName1.size() + encodedName2.size();
-
-        ByteList pointerList = DomainName.pointerTo(pointTo);
-        ByteList wholeList = ByteList.concatLists(encodedName1, encodedName2, pointerList);
-
-        // Exercise
-        DomainName domainName = DomainName.of(wholeList, startingPoint);
-
-        // Verify
-        assertEquals(name2, domainName.getName());
-        // Since nothing follows the pointer, we know that only the
-        // length of the pointer (2 bytes) is consumed.
-
-    }
 
 
-    private ByteList encodedText(String clearText) {
-        DomainName domainName = new DomainName(clearText);
-        String hex = domainName.asList().hex();
-        return ByteList.of(hex);
-    }
+
+
+
 
     /*
     * Names can be compressed.

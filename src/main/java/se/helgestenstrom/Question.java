@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class Question {
 
-    private final DomainName domainName;
+    private final Name name;
 
     private final List<String> labels;
 
@@ -32,7 +32,7 @@ public class Question {
      * @param qClass The QCLASS of the Question
      */
     public Question(List<String> labels, String qName, String qType, String qClass) {
-        domainName = new DomainName(qName);
+        name = new Name(qName);
         this.labels = labels;
 
         type = ByteList.of(qType);
@@ -60,7 +60,7 @@ public class Question {
      * @return the Question as a list
      */
     public ByteList asList() {
-        ByteList domainAsList = domainName.asList();
+        ByteList domainAsList = name.asList();
         return domainAsList
                 .append(type)
                 .append(clazz);
