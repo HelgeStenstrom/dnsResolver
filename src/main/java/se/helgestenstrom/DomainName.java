@@ -95,13 +95,4 @@ public class DomainName implements Hex {
         return preamble + encoded;
     }
 
-    /**
-     * The number of consumed bytes depends on how the name is constructed.
-     * If it comes from a pointer only, only two bytes are consumed.
-     *
-     * @return the number of bytes in a ByteList representing this name, that is consumed
-     */
-    public int consumes() {
-        return hex().length() / 2;
-    }
 }

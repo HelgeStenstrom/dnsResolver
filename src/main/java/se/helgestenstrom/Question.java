@@ -13,6 +13,8 @@ public class Question implements Hex {
 
     private final ByteList type;
     private final ByteList clazz;
+    private final int classInt;
+    private final int typeInt;
 
     /**
      * @param qName  usually a domain and host string, with dots.
@@ -33,32 +35,14 @@ public class Question implements Hex {
         this.labels = labels;
 
         type = ByteList.of(qType);
+        typeInt = ByteList.of(qType).u16(0);
 
         clazz = ByteList.of(qClass);
+        classInt = ByteList.of(qClass).u16(0);
     }
 
-    /**
-     * @param hexQuestionAndFollowingData Hexadecimal representation of a Question, + following data to be ignored.
-     */
-    private Question(String hexQuestionAndFollowingData) {
-        ByteList byteList = ByteList.of(hexQuestionAndFollowingData);
-        domainName = DomainName.of(byteList, 0);
-        labels = List.of("foobar");
-        int fromIndex = domainName.consumes();
-        type = byteList.subList(fromIndex, fromIndex + 2);
 
-        clazz = byteList.subList(fromIndex + 2, fromIndex + 4);
-    }
 
-    /**
-     * @param hexQuestionAndFollowingData Hexadecimal representation of a Question, + following data to be ignored.
-     * @return an instance
-     * @deprecated because DnsMessage should not handle decoding.
-     */
-    @Deprecated(forRemoval = true)
-    public static Question of(String hexQuestionAndFollowingData) {
-        return new Question(hexQuestionAndFollowingData);
-    }
 
     @Override
     public String hex() {
@@ -69,14 +53,6 @@ public class Question implements Hex {
         return domainName;
     }
 
-
-    public ByteList getQClass() {
-        return clazz;
-    }
-
-    public ByteList getQType() {
-        return type;
-    }
 
     public List<String> getLabels() {
         return labels;
