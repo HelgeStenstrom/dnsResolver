@@ -3,7 +3,7 @@ package se.helgestenstrom;
 /**
  * Collects answers
  */
-public class ResourceRecord implements Hex{
+public class ResourceRecord {
 
     private final DomainName name;
     private final int type;
@@ -41,9 +41,16 @@ public class ResourceRecord implements Hex{
         return null;
     }
 
-    @Override
-    public String hex() {
-        return name.hex();
+
+    private String hex() {
+        return name.asList().hex();
+    }
+
+    /**
+     * @return the record as a list
+     */
+    public ByteList asList() {
+        return ByteList.of(hex());
     }
 
     public String getName() {

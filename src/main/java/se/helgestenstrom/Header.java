@@ -69,16 +69,21 @@ public class Header {
 
     /**
      * @return Hex representation of the header, so that it can be included in a hex of the whole message.
-     * @deprecated Use ByteList representation instead
      */
-    @Deprecated(forRemoval = true)
-    public String hex() {
+    private String hex() {
         String hex =  ByteList.fromInt(qdCount)
                 .append(ByteList.fromInt(anCount))
                 .append(ByteList.fromInt(nsCount))
                 .append(ByteList.fromInt(arCount))
                 .hex();
-        return id.hex() + flags.hex() + hex;
+        return id.asList().hex() + flags.asList().hex() + hex;
+    }
+
+    /**
+     * @return the header as a list
+     */
+    public ByteList asList() {
+        return ByteList.of(hex());
     }
 
     public int getQdCount() {

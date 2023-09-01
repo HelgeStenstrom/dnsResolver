@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Holds one Question section, described in RFC 1035 4.1.2
  */
-public class Question implements Hex {
+public class Question {
 
     private final DomainName domainName;
 
@@ -42,6 +42,9 @@ public class Question implements Hex {
         classInt = ByteList.of(qClass).u16(0);
     }
 
+    /**
+     * @return a two octet code which specifies the type of the query.
+     */
     public int getClazz() {
         return classInt;
     }
@@ -50,12 +53,15 @@ public class Question implements Hex {
         return typeInt;
     }
 
+    private String hex() {
+        return domainName.asList().hex() + type.hex() + clazz.hex();
+    }
 
-
-
-    @Override
-    public String hex() {
-        return domainName.hex() + type.hex() + clazz.hex();
+    /**
+     * @return the Question as a list
+     */
+    public ByteList asList() {
+        return ByteList.of(hex());
     }
 
     public List<String> getLabels() {

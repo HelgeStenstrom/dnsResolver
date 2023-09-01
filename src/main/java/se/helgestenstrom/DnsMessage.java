@@ -29,7 +29,10 @@ public class DnsMessage {
      */
     private String hex() {
 
-        return header.hex() + questions.stream().map(Question::hex).collect(Collectors.joining());
+        return header.asList().hex() + questions.stream()
+                .map(Question::asList)
+                .map(ByteList::hex)
+                .collect(Collectors.joining());
     }
 
     /**

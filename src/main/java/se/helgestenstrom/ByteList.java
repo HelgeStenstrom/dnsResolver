@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Holds lists of bytes, can be created from a hex string
  */
-public class ByteList extends ArrayList<Integer> implements Hex {
+public class ByteList extends ArrayList<Integer>  {
 
 
     /**
@@ -84,7 +84,9 @@ public class ByteList extends ArrayList<Integer> implements Hex {
         return (statusWord & 0xc000) == 0xc000;
     }
 
-    @Override
+    /**
+     * @return the list as a string of hexadecimal digits. Each pair of digits is one item in the list.
+     */
     public String hex() {
         return this.stream()
                 .map(intValue -> String.format("%02x", intValue))

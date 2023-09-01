@@ -13,7 +13,7 @@ class HeaderTest {
         Flags flags = new Flags(true);
 
         Header header = new Header(id, flags, 1, 20, 21, 22);
-        String hex = header.hex();
+        String hex = header.asList().hex();
 
         assertEquals("abcd0100", hex.substring(0,8));
     }
@@ -24,7 +24,7 @@ class HeaderTest {
 
         assertAll(
                 () -> assertEquals(0x16, header.getId().id()),
-                () -> assertEquals("abcd", header.getFlags().hex()),
+                () -> assertEquals("abcd", header.getFlags().asList().hex()),
                 () -> assertEquals(0x1002, header.getQdCount()),
                 () -> assertEquals(0x2003, header.getAnCount()),
                 () -> assertEquals(0x3004, header.getNsCount()),
@@ -41,7 +41,7 @@ class HeaderTest {
     @Test
     void flagsFromHexString() {
         Header header = Header.fromHex("0016abcd1002200330044005");
-        assertEquals("abcd", header.getFlags().hex());
+        assertEquals("abcd", header.getFlags().asList().hex());
     }
 
     @Test

@@ -1,12 +1,14 @@
 package se.helgestenstrom;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Holds the QNAME from RFC 1035, section 4.1.2
  */
-public class DomainName implements Hex {
+public class DomainName  {
     private final String name;
 
     /**
@@ -81,8 +83,14 @@ public class DomainName implements Hex {
         return name;
     }
 
-    @Override
-    public String hex() {
+    /**
+     * @return the name as a list
+     */
+    public ByteList asList() {
+        return ByteList.of(hex());
+    }
+
+    private String hex() {
 
         var parts = name.split("\\.");
         String collect = Arrays.stream(parts).map(this::partHex).collect(Collectors.joining());

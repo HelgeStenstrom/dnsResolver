@@ -42,9 +42,16 @@ public class Flags {
     /**
      * @return the flag field as an integer, in hexadecimal representation.
      */
-    public String hex() {
+    private String hex() {
 
         return String.format("%04x", bitField);
+    }
+
+    /**
+     * @return the flag as a list of 2 bytes
+     */
+    public ByteList asList() {
+        return ByteList.of(hex());
     }
 
     private int makeBitField(boolean isResponse, boolean isAuthoritative, boolean recursionDesired) {

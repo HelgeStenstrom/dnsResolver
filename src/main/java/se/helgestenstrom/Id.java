@@ -1,18 +1,35 @@
 package se.helgestenstrom;
 
-public class Id implements Hex {
+/**
+ * Represents the ID number of a message
+ */
+public class Id  {
 
     private final int number;
 
+    /**
+     * Create an instance
+     * @param number ID number
+     */
     public Id(int number) {
         this.number = number;
     }
 
-    @Override
-    public String hex() {
+
+    private String hex() {
         return String.format("%04x", number);
     }
 
+    /**
+     * @return the ID as a list of two bytes
+     */
+    public ByteList asList() {
+        return ByteList.of(hex());
+    }
+
+    /**
+     * @return the ID number
+     */
     public int id() {
         return number;
     }

@@ -1,12 +1,10 @@
 package se.helgestenstrom;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +18,7 @@ class DomainNameTest {
 
         var e = new DomainName(raw);
 
-        String h = e.hex();
+        String h = e.asList().hex();
 
         assertEquals("03646e7306676f6f676c6503636f6d00", h);
     }
@@ -39,7 +37,7 @@ class DomainNameTest {
 
         var e = new DomainName(raw);
 
-        assertEquals(encoded, e.hex());
+        assertEquals(encoded, e.asList().hex());
     }
 
     @Test
@@ -114,28 +112,10 @@ class DomainNameTest {
 
     }
 
-    @Test
-    @Disabled("fails, waiting for other refactorings")
-    void pointerConsumesTwoBytes() {
-        // Setup
-
-        ByteList firstPartOfMessage = new ByteList(List.of(11, 12, 13, 14, 15));
-
-        ByteList secondPart = encodedText("contains a name");
-        ByteList pointerList = DomainName.pointerTo(firstPartOfMessage.size());
-        ByteList wholeMessage = ByteList.concatLists(firstPartOfMessage, secondPart, pointerList);
-
-        // Exercise
-        DomainName domainName = DomainName.of(wholeMessage, firstPartOfMessage.size());
-
-        // Verify
-        //assertEquals(pointerList.size(), domainName.consumes());
-    }
-
 
     private ByteList encodedText(String clearText) {
         DomainName domainName = new DomainName(clearText);
-        String hex = domainName.hex();
+        String hex = domainName.asList().hex();
         return ByteList.of(hex);
     }
 

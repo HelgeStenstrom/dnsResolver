@@ -12,13 +12,13 @@ class FlagsTest {
     void recursionDesired() {
         var flags = new Flags(true);
 
-        assertEquals("0100", flags.hex());
+        assertEquals("0100", flags.asList().hex());
     }
     @Test
     void recursionNotDesired() {
         var flags = new Flags(false);
 
-        assertEquals("0000", flags.hex());
+        assertEquals("0000", flags.asList().hex());
     }
 
     @ParameterizedTest
@@ -30,7 +30,7 @@ class FlagsTest {
         Flags f = new Flags.Builder()
                 .setRecursionDesired(desired)
                 .build();
-        assertEquals(hex, f.hex());
+        assertEquals(hex, f.asList().hex());
     }
 
     @ParameterizedTest
@@ -42,7 +42,7 @@ class FlagsTest {
         Flags f = new Flags.Builder()
                 .setResponse(isResponse)
                 .build();
-        assertEquals(hex, f.hex());
+        assertEquals(hex, f.asList().hex());
     }
 
     @ParameterizedTest
@@ -55,7 +55,7 @@ class FlagsTest {
                 .setIsAuthoritative(isAuthoritative)
                 .setRecursionDesired(false)
                 .build();
-        assertEquals(hex, f.hex());
+        assertEquals(hex, f.asList().hex());
     }
 
     @Test
@@ -63,7 +63,7 @@ class FlagsTest {
 
         Flags f = new Flags("abcd");
 
-        assertEquals("abcd", f.hex());
+        assertEquals("abcd", f.asList().hex());
     }
 
     @Test
