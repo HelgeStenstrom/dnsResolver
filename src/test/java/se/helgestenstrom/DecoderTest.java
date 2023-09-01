@@ -1,17 +1,17 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.List;
-import java.util.stream.Stream;
-
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DecoderTest {
 
@@ -85,32 +85,6 @@ class DecoderTest {
         );
     }
 
-    @Test
-    void oneQuestionSingleCharacterName() {
-
-        // Setup
-        int questionCount = 1;
-        ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
-
-        ByteList encodedName = new ByteList(List.of(1, (int) 'a', 0));
-        ByteList qType = new ByteList(List.of(0xab, 0xcd));
-        ByteList qClass = new ByteList(List.of(0x34, 0x56));
-        ByteList message = new ByteList()
-                .append(header, encodedName, qType, qClass);
-
-        Decoder decoder = new Decoder(message);
-
-        // Exercise
-        List<Question> questions = decoder.getQuestions();
-
-
-        // Verify
-        assertEquals(1, questions.size());
-        Question question = questions.get(0);
-        assertEquals(List.of("a"), question.getLabels());
-
-
-    }
 
     public static Stream<Arguments> varyName() {
         return Stream.of(
@@ -123,7 +97,6 @@ class DecoderTest {
                         0), List.of("a", "bcd"))
         );
     }
-
     @ParameterizedTest
     @MethodSource("varyName")
     void oneQuestionSomeNames(List<Integer> bytes, List<String> expected) {
@@ -132,11 +105,9 @@ class DecoderTest {
         int questionCount = 1;
         ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
 
-        ByteList encodedName = new ByteList(bytes);
-        ByteList qType = new ByteList(List.of(0xab, 0xcd));
-        ByteList qClass = new ByteList(List.of(0x34, 0x56));
-        ByteList message = new ByteList()
-                .append(header, encodedName, qType, qClass);
+        ByteList question1 = questionWithNameFromBytes(bytes);
+        ByteList message = header
+                .append(question1);
 
         Decoder decoder = new Decoder(message);
 
@@ -149,8 +120,54 @@ class DecoderTest {
         Question question = questions.get(0);
         assertEquals(expected, question.getLabels());
 
-
     }
+
+    private static ByteList questionWithNameFromBytes(List<Integer> bytes) {
+        ByteList encodedName = new ByteList(bytes);
+        ByteList qType = new ByteList(List.of(0xab, 0xcd));
+        ByteList qClass = new ByteList(List.of(0x34, 0x56));
+        return encodedName.append(qType, qClass);
+    }
+
+    public static Stream<Arguments> secondNames() {
+        return Stream.of(
+                Arguments.of(List.of(
+                        1, (int) 'a',
+                        3, (int) 'b', (int) 'c', (int) 'd',
+                        0), List.of("a", "bcd"))
+        );
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("secondNames")
+    @DisplayName("Two equal questions, check second")
+    @Disabled("code not reade, not sure about direction.")
+    void twoEqualQuestions(List<Integer> bytes, List<String> expected) {
+
+        // Setup
+        int questionCount = 2;
+        ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
+
+        ByteList question1 = questionWithNameFromBytes(bytes);
+        ByteList question2 = questionWithNameFromBytes(bytes);
+        ByteList message = header
+                .append(question1, question2);
+
+        Decoder decoder = new Decoder(message);
+
+        // Exercise
+        List<Question> questions = decoder.getQuestions();
+
+
+        // Verify
+        assertEquals(2, questions.size());
+        Question question = questions.get(1);
+        assertEquals(expected, question.getLabels());
+
+        fail("test not done");
+    }
+
 
     private static ByteList encodeHeader(int id, int flags, int qdCount, int anCount, int nsCount, int arCount) {
         List<Integer> idPart = ByteList.fromInt(id);

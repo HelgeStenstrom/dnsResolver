@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DnsMessageTest {
 
+    @SuppressWarnings("unused")
     private final String exampleMessage = "00168080000100020000000003646e7306676f6f676c6503636f6d0000010001c00c0001000100000214000408080808c00c0001000100000214000408080404";
 
     public static Stream<Arguments> varyId() {
@@ -28,7 +30,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(idNo);
         Flags flags = new Flags(true);
-        final Question question = new Question("dns.google.com", "0001", "0001", List.of("dns.google.com"));
+        String host = "dns.google.com";
+        final Question question = new Question(labelsFromDottedName(host), host, "0001", "0001");
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
 
         // Exercise
@@ -52,7 +55,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(desiredRecursion);
-        final Question question = new Question("dns.google.com", "0001", "0001", List.of("dns.google.com"));
+        String host = "dns.google.com";
+        final Question question = new Question(labelsFromDottedName(host), host, "0001", "0001");
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
 
         // Exercise
@@ -76,7 +80,8 @@ class DnsMessageTest {
         // Setup
         Id id = new Id(22);
         Flags flags = new Flags(true);
-        final Question question = new Question(host, "0001", "0001", List.of(host));
+        List<String> hostLabels = labelsFromDottedName(host);
+        final Question question = new Question(hostLabels, host, "0001", "0001");
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
 
         // Exercise
@@ -86,12 +91,18 @@ class DnsMessageTest {
         assertEquals(expected, message);
     }
 
+    private static List<String> labelsFromDottedName(String host) {
+        return Arrays.asList(host.split("\\."));
+    }
+
     @Test
     void byteArray() {
         // Setup
         Id id = new Id(22);
         final Flags flags = new Flags(true);
-        final Question abc = new Question("00", "0001", "0001", List.of("00"));
+        String host = "examplehost";
+        List<String> labels = List.of(host);
+        final Question abc = new Question(labels, host, "0001", "0001");
         DnsMessage dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(abc));
 
         // Exercise

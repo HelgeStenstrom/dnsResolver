@@ -18,6 +18,8 @@ public class Question {
 
     private final int typeInt;
     /**
+     * @param labels A list of short strings, each called a label.
+     *               These normally make up the period-separated domain name.
      * @param qName  usually a domain and host string, with dots.
      *               <p>
      *               A domain name represented as a sequence of labels, where
@@ -28,10 +30,8 @@ public class Question {
      *               padding is used.</p>
      * @param qType  The QTYPE of the Question
      * @param qClass The QCLASS of the Question
-     * @param labels A list of short strings, each called a label.
-     *               These normally make up the period-separated domain name.
      */
-    public Question(String qName, String qType, String qClass, List<String> labels) {
+    public Question(List<String> labels, String qName, String qType, String qClass) {
         domainName = new DomainName(qName);
         this.labels = labels;
 
@@ -45,10 +45,12 @@ public class Question {
     /**
      * @return a two octet code which specifies the type of the query.
      */
+    @SuppressWarnings("unused")
     public int getClazz() {
         return classInt;
     }
 
+    @SuppressWarnings("unused")
     public int getType() {
         return typeInt;
     }
@@ -58,7 +60,8 @@ public class Question {
      * @return the Question as a list
      */
     public ByteList asList() {
-        return domainName.asList()
+        ByteList domainAsList = domainName.asList();
+        return domainAsList
                 .append(type)
                 .append(clazz);
     }
