@@ -117,6 +117,10 @@ class DecoderTest {
                 Arguments.of(List.of(1, (int) 'a', 0), List.of("a"))
                 , Arguments.of(List.of(1, (int) 'b', 0), List.of("b"))
                 , Arguments.of(List.of(3, (int) 'a', (int) 'b', (int) 'c', 0), List.of("abc"))
+                , Arguments.of(List.of(
+                        1, (int) 'a',
+                        3, (int) 'b', (int) 'c', (int) 'd',
+                        0), List.of("a", "bcd"))
         );
     }
 
