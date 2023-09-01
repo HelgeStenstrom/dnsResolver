@@ -1,6 +1,7 @@
 package se.helgestenstrom;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +48,13 @@ public class Name {
         String preamble = String.format("%02x", s.length());
         String encoded = s.chars().mapToObj(c -> String.format("%02x", c)).collect(Collectors.joining());
         return preamble + encoded;
+    }
+
+    /**
+     * @return a list of the words between the dots in the name.
+     */
+    public List<String> labels() {
+        return Arrays.stream(value.split("\\.")).toList();
     }
 
 }

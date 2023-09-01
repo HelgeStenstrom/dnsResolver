@@ -74,7 +74,9 @@ public class Decoder {
         }
 
 
-        return List.of(new Question(labels, "HardcodedName", "1234", "5678"));
+        String dottedName = String.join(".", labels);
+
+        return List.of(new Question(dottedName, "1234", "5678"));
     }
 
     /**

@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +41,15 @@ class NameTest {
         assertEquals(encoded, e.asList().hex());
     }
 
+    @Test
+    void labels() {
+
+        var raw = "abc.def";
+        var name = new Name(raw);
+
+        List<String> expected = List.of("abc", "def");
+        assertEquals(expected, name.labels());
+    }
 
 
 

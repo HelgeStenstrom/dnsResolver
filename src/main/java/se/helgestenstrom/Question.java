@@ -9,17 +9,12 @@ public class Question {
 
     private final Name name;
 
-    private final List<String> labels;
-
-    private final ByteList type;
-    private final ByteList clazz;
-
     private final int classInt;
 
     private final int typeInt;
+
+
     /**
-     * @param labels A list of short strings, each called a label.
-     *               These normally make up the period-separated domain name.
      * @param qName  usually a domain and host string, with dots.
      *               <p>
      *               A domain name represented as a sequence of labels, where
@@ -31,29 +26,25 @@ public class Question {
      * @param qType  The QTYPE of the Question
      * @param qClass The QCLASS of the Question
      */
-    public Question(List<String> labels, String qName, String qType, String qClass) {
+    public Question(String qName, String qType, String qClass) {
         name = new Name(qName);
-        this.labels = labels;
-
-        type = ByteList.of(qType);
         typeInt = ByteList.of(qType).u16(0);
-
-        clazz = ByteList.of(qClass);
         classInt = ByteList.of(qClass).u16(0);
+
+
     }
 
     /**
-     * @return a two octet code which specifies the type of the query.
+     * @param qName usually a domain or host string with dots.
+     * @param qType The type according to RFC 1035
+     * @param qClass The class according to RFC 1035
      */
-    @SuppressWarnings("unused")
-    public int getClazz() {
-        return classInt;
+    public Question(Name qName, int qType, int qClass) {
+        this.name = qName;
+        this.typeInt = qType;
+        this.classInt = qClass;
     }
 
-    @SuppressWarnings("unused")
-    public int getType() {
-        return typeInt;
-    }
 
 
     /**
@@ -62,11 +53,23 @@ public class Question {
     public ByteList asList() {
         ByteList domainAsList = name.asList();
         return domainAsList
-                .append(type)
-                .append(clazz);
+                .append(ByteList.fromInt(typeInt))
+                .append(ByteList.fromInt(classInt));
     }
 
     public List<String> getLabels() {
-        return labels;
+        return name.labels();
+    }
+
+    public int getType() {
+        return typeInt;
+    }
+
+    public int getQClass() {
+        return classInt;
+    }
+
+    public Name getName() {
+        return name;
     }
 }
