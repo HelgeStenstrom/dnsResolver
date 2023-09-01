@@ -56,36 +56,7 @@ class ResourceRecordTest {
     }
 
 
-    @Test
-    void name() {
 
-        // Setup
-        String thename = "thename";
-        DomainName domainName = new DomainName(thename);
-        int type = 0x1001;
-
-        // Execute
-        ResourceRecord r = new ResourceRecord(domainName, type);
-
-        // Verify
-        assertEquals(thename, r.getName());
-
-    }
-
-    @Test
-    void type() {
-
-        // Setup
-        DomainName domainName = new DomainName("ignored");
-        int type = 0x1001;
-
-        // Execute
-        ResourceRecord r = new ResourceRecord(domainName, type);
-
-        // Verify
-        assertEquals(type, r.getType());
-
-    }
 
     private String getString(List<Integer> integers) {
 

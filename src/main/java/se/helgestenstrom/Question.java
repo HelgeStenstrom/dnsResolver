@@ -53,15 +53,14 @@ public class Question {
         return typeInt;
     }
 
-    private String hex() {
-        return domainName.asList().hex() + type.hex() + clazz.hex();
-    }
 
     /**
      * @return the Question as a list
      */
     public ByteList asList() {
-        return ByteList.of(hex());
+        return domainName.asList()
+                .append(type)
+                .append(clazz);
     }
 
     public List<String> getLabels() {

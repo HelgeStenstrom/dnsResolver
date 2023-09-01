@@ -16,15 +16,11 @@ public class Id  {
     }
 
 
-    private String hex() {
-        return String.format("%04x", number);
-    }
-
     /**
      * @return the ID as a list of two bytes
      */
     public ByteList asList() {
-        return ByteList.of(hex());
+        return ByteList.fromInt(number);
     }
 
     /**

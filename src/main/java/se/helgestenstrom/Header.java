@@ -31,29 +31,6 @@ public class Header {
         this.arCount = arCount;
     }
 
-    private Header(String hex) {
-        this(
-                new Id(parse16bits(hex, 0)),
-                new Flags(hex.substring(4, 8)),
-                parse16bits(hex, 8),
-                parse16bits(hex, 12),
-                parse16bits(hex, 16),
-                parse16bits(hex, 20));
-
-    }
-
-    private static int parse16bits(String hex, int startIndex) {
-        String idPart = hex.substring(startIndex, startIndex + 4);
-        return Integer.parseInt(idPart, 16);
-    }
-
-    /**
-     * @param hex Hexadecimal representation of the bits of the header.
-     * @return an instance
-     */
-    public static Header fromHex(String hex) {
-        return new Header(hex);
-    }
 
     /**
      * @return The ID of the message
@@ -68,22 +45,17 @@ public class Header {
 
 
     /**
-     * @return Hex representation of the header, so that it can be included in a hex of the whole message.
-     */
-    private String hex() {
-        String hex =  ByteList.fromInt(qdCount)
-                .append(ByteList.fromInt(anCount))
-                .append(ByteList.fromInt(nsCount))
-                .append(ByteList.fromInt(arCount))
-                .hex();
-        return id.asList().hex() + flags.asList().hex() + hex;
-    }
-
-    /**
      * @return the header as a list
      */
     public ByteList asList() {
-        return ByteList.of(hex());
+        ByteList counts = ByteList.fromInt(qdCount)
+                .append(ByteList.fromInt(anCount))
+                .append(ByteList.fromInt(nsCount))
+                .append(ByteList.fromInt(arCount));
+        return id.asList()
+                .append(flags.asList())
+                .append(counts);
+
     }
 
     public int getQdCount() {

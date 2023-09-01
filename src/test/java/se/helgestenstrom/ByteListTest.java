@@ -107,4 +107,13 @@ class ByteListTest {
         assertThrows(IllegalArgumentException.class, () -> ByteList.fromInt(0x1ffff), "too large number");
     }
 
+    @Test
+    void asByteArray() {
+        ByteList byteList = new ByteList(List.of(0x0, 0xde, 0xad));
+
+        byte[] expected = {(byte) 0, (byte) 0xde, (byte) 0xad};
+
+        assertArrayEquals(expected, byteList.asArray());
+    }
+
 }

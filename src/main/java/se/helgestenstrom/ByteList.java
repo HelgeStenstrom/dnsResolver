@@ -125,4 +125,19 @@ public class ByteList extends ArrayList<Integer>  {
         Integer value = ((this.get(offset) & 0x3f)<<8) | (this.get(offset+1) & 0xff);
         return Optional.of(value);
     }
+
+    /**
+     * @return the list as a byte array
+     */
+    public byte[] asArray() {
+
+        byte[] xx = new byte[this.size()];
+
+        for (var i = 0; i < this.size(); i++) {
+            byte tmp = (byte) (0xff & this.get(i));
+            xx[i] = tmp;
+        }
+
+        return xx;
+    }
 }

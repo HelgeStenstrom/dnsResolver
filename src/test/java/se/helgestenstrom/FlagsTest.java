@@ -58,13 +58,6 @@ class FlagsTest {
         assertEquals(hex, f.asList().hex());
     }
 
-    @Test
-    void fromHex() {
-
-        Flags f = new Flags("abcd");
-
-        assertEquals("abcd", f.asList().hex());
-    }
 
     @Test
     void isQueryFromInt() {
