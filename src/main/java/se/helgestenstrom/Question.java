@@ -13,9 +13,10 @@ public class Question implements Hex {
 
     private final ByteList type;
     private final ByteList clazz;
-    private final int classInt;
-    private final int typeInt;
 
+    private final int classInt;
+
+    private final int typeInt;
     /**
      * @param qName  usually a domain and host string, with dots.
      *               <p>
@@ -41,6 +42,14 @@ public class Question implements Hex {
         classInt = ByteList.of(qClass).u16(0);
     }
 
+    public int getClazz() {
+        return classInt;
+    }
+
+    public int getType() {
+        return typeInt;
+    }
+
 
 
 
@@ -48,11 +57,6 @@ public class Question implements Hex {
     public String hex() {
         return domainName.hex() + type.hex() + clazz.hex();
     }
-
-    public DomainName getName() {
-        return domainName;
-    }
-
 
     public List<String> getLabels() {
         return labels;

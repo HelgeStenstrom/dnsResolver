@@ -1,18 +1,14 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.util.HexFormat;
-import java.util.List;
-import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DnsMessageTest {
 
@@ -33,10 +29,10 @@ class DnsMessageTest {
         Id id = new Id(idNo);
         Flags flags = new Flags(true);
         final Question question = new Question("dns.google.com", "0001", "0001", List.of("dns.google.com"));
-        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
 
         // Exercise
-        var message = dnsMessage.hex();
+        var message = dnsMessage.byteList().hex();
 
         // Verify
         assertEquals(expected, message);
@@ -57,10 +53,10 @@ class DnsMessageTest {
         Id id = new Id(22);
         Flags flags = new Flags(desiredRecursion);
         final Question question = new Question("dns.google.com", "0001", "0001", List.of("dns.google.com"));
-        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
 
         // Exercise
-        var message = dnsMessage.hex();
+        var message = dnsMessage.byteList().hex();
 
         // Verify
         assertEquals(expected, message);
@@ -81,10 +77,10 @@ class DnsMessageTest {
         Id id = new Id(22);
         Flags flags = new Flags(true);
         final Question question = new Question(host, "0001", "0001", List.of(host));
-        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
 
         // Exercise
-        var message = dnsMessage.hex();
+        var message = dnsMessage.byteList().hex();
 
         // Verify
         assertEquals(expected, message);

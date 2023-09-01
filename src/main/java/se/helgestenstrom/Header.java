@@ -1,9 +1,10 @@
 package se.helgestenstrom;
 
+
 /**
  * Hold RFC 1035 4.1.1 Header section, with 12 bytes of information
  */
-public class Header implements Hex{
+public class Header {
 
     private final Id id;
 
@@ -14,8 +15,8 @@ public class Header implements Hex{
     private final int arCount;
 
     /**
-     * @param id A 16-bit identifier assigned by the program that generates any kind of query.
-     * @param flags The second row of the RFC 1035 4.1.1  table
+     * @param id      A 16-bit identifier assigned by the program that generates any kind of query.
+     * @param flags   The second row of the RFC 1035 4.1.1  table
      * @param qdCount the number of QD values
      * @param anCount the number of AN values
      * @param nsCount the number of NS values
@@ -42,7 +43,7 @@ public class Header implements Hex{
     }
 
     private static int parse16bits(String hex, int startIndex) {
-        String idPart = hex.substring(startIndex, startIndex+4);
+        String idPart = hex.substring(startIndex, startIndex + 4);
         return Integer.parseInt(idPart, 16);
     }
 
@@ -65,9 +66,19 @@ public class Header implements Hex{
         return flags;
     }
 
-    @Override
+
+    /**
+     * @return Hex representation of the header, so that it can be included in a hex of the whole message.
+     * @deprecated Use ByteList representation instead
+     */
+    @Deprecated(forRemoval = true)
     public String hex() {
-        return id.hex() + flags.hex() + new Counts().hex();
+        String hex =  ByteList.fromInt(qdCount)
+                .append(ByteList.fromInt(anCount))
+                .append(ByteList.fromInt(nsCount))
+                .append(ByteList.fromInt(arCount))
+                .hex();
+        return id.hex() + flags.hex() + hex;
     }
 
     public int getQdCount() {

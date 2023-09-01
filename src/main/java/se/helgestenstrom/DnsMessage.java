@@ -2,6 +2,7 @@ package se.helgestenstrom;
 
 import java.util.HexFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A DNS message, as described by RFC 1035, section 4, and as required by this exercise. (See the README.md file)
@@ -26,9 +27,17 @@ public class DnsMessage {
     /**
      * @return The DNS message as a hex string, representing bytes to be sent
      */
-    public String hex() {
+    private String hex() {
 
-        return header.hex() + questions.get(0).hex();
+        return header.hex() + questions.stream().map(Question::hex).collect(Collectors.joining());
+    }
+
+    /**
+     * @return a list representing the message. This list can also be parsed into a message.
+     */
+    public ByteList byteList() {
+
+        return  ByteList.of(hex());
     }
 
     /**
