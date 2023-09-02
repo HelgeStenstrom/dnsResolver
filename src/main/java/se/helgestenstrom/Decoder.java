@@ -1,5 +1,6 @@
 package se.helgestenstrom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,11 +50,28 @@ public class Decoder {
 
     public List<Question> getQuestions() {
 
-        int sizeOfHeader = 12;
+        int qdCount = getHeader().getQdCount();
 
-        Name name = nameDecoder.nameFrom(encoded, sizeOfHeader);
+        int startingPoint = 12;
 
-        return List.of(new Question(name, 1234, 5667));
+        return parseQuestions(qdCount, startingPoint, nameDecoder, encoded);
+    }
+
+    private List<Question> parseQuestions(int qdCount, final int startingPoint, NameDecoder nameDecoder, ByteList encoded) {
+        List<Question> collector = new ArrayList<>();
+
+        int nextIndex = startingPoint;
+        for (int i = 0; i < qdCount; i++) {
+            Pair<Name, Integer> result = nameDecoder.nameAndConsumes(encoded, startingPoint);
+            Name name = result.first;
+
+            int qt = encoded.u16(nextIndex + result.second);
+            int qc = encoded.u16(nextIndex + result.second+2);
+            Question question = new Question(name, qt, qc);
+            collector.add(question);
+            nextIndex += result.second;
+        }
+        return collector;
     }
 
     /**
@@ -62,5 +80,24 @@ public class Decoder {
      */
     public Name nameFrom(int startingPoint) {
         return nameDecoder.nameFrom(encoded, startingPoint);
+    }
+
+
+    /**
+     * @param <T1> type of the first value
+     * @param <T2> type of the second value
+     */
+    public static class Pair<T1, T2> {
+        private final T1 first;
+        private final T2 second;
+
+        /**
+         * @param first value
+         * @param second value
+         */
+        public Pair(T1 first, T2 second) {
+            this.first = first;
+            this.second = second;
+        }
     }
 }

@@ -19,7 +19,7 @@ public class ByteList extends ArrayList<Integer>  {
     }
 
     /**
-     * Creates an empty lit
+     * Creates an empty list
      */
     public ByteList() {
         super();

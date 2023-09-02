@@ -169,7 +169,7 @@ class DecoderTest {
     @ParameterizedTest
     @MethodSource("secondNames")
     @DisplayName("Two equal questions, check second")
-    @Disabled("code not reade, not sure about direction.")
+    @Disabled("code not ready, not sure about direction.")
     void twoEqualQuestions(List<Integer> bytes, List<String> expected) {
 
         // Setup

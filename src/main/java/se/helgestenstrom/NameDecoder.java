@@ -2,6 +2,7 @@ package se.helgestenstrom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -45,5 +46,22 @@ public class NameDecoder {
         }
         var partial = byteList.subList(offset, byteList.size());
         return nameFrom(partial);
+    }
+
+    /**
+     * @param encoded full list of the encoded message
+     * @param startingPoint where the name starts in the encoded message
+     * @return pair of {@link Name} and number of consumed bytes for the name
+     */
+    public Decoder.Pair<Name, Integer> nameAndConsumes(ByteList encoded, int startingPoint) {
+        Optional<Integer> maybePointer = encoded.pointerValue(startingPoint);
+        if (maybePointer.isPresent()) {
+            Name name = nameFrom(encoded, maybePointer.get());
+            int consumed = 2;
+            return new Decoder.Pair<>(name, consumed);
+        }
+        Name name = nameFrom(encoded, startingPoint);
+        int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
+        return new Decoder.Pair<>(name, sum + 1);
     }
 }

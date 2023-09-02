@@ -27,12 +27,8 @@ public class DnsMessage {
     public ByteList byteList() {
 
         ByteList allQuestions = new ByteList();
-        for (var q : questions) {
-            allQuestions.addAll(q.asList());
-        }
-
+        questions.forEach(q -> allQuestions.addAll(q.asList()));
         return header.asList().append(allQuestions);
-
     }
 
     /**
