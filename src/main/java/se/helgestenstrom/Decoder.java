@@ -1,9 +1,6 @@
 package se.helgestenstrom;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Decodes a message and creates various items of domain types
@@ -53,30 +50,10 @@ public class Decoder {
     public List<Question> getQuestions() {
 
         int sizeOfHeader = 12;
-        Optional<Integer> maybePointer = encoded.pointerValue(sizeOfHeader);
-        if (maybePointer.isPresent()) {
-            throw new UnsupportedOperationException("Not implemented yet");
-        }
-        var bytes = encoded.subList(sizeOfHeader, encoded.size());
 
-        int idx = 0;
-        int labelLength = bytes.get(idx);
-        ArrayList<String> labels = new ArrayList<>();
-        while (labelLength != 0) {
-            var piece = bytes.subList(idx + 1, idx + 1 + labelLength);
-            var label = piece.stream()
-                    .map(c -> (char) c.intValue())
-                    .map(Object::toString)
-                    .collect(Collectors.joining());
-            labels.add(label);
-            idx += labelLength + 1;
-            labelLength = bytes.get(idx);
-        }
+        Name name = nameDecoder.nameFrom(encoded, sizeOfHeader);
 
-
-        String dottedName = String.join(".", labels);
-
-        return List.of(new Question(dottedName, "1234", "5678"));
+        return List.of(new Question(name, 1234, 5667));
     }
 
     /**

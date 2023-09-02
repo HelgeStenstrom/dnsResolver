@@ -106,7 +106,7 @@ class DecoderTest {
         int questionCount = 1;
         ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
 
-        ByteList question1 = questionWithNameFromBytes(bytes);
+        ByteList question1 = questionWithNameFromBytes(bytes, 0xabcd, 0x3456);
         ByteList message = header
                 .append(question1);
 
@@ -120,14 +120,40 @@ class DecoderTest {
         assertEquals(1, questions.size());
         Question question = questions.get(0);
         assertEquals(expected, question.getLabels());
-
     }
 
-    private static ByteList questionWithNameFromBytes(List<Integer> bytes) {
+    @Test
+    @DisplayName("Type and class of Question")
+    void oneQuestionTypeAndClass() {
+
+        // Setup
+        int questionCount = 1;
+        ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
+
+        int type = 1001;
+        int qClass = 1002;
+        ByteList question1 = questionWithNameFromBytes(List.of(1, (int) 'a', 0), type, qClass);
+        ByteList message = header
+                .append(question1);
+
+        Decoder decoder = new Decoder(message);
+
+        // Exercise
+        List<Question> questions = decoder.getQuestions();
+
+
+        // Verify
+        assertEquals(1, questions.size());
+        Question question = questions.get(0);
+        assertEquals(type, question.getType());
+        assertEquals(qClass, question.getQClass());
+    }
+
+    private static ByteList questionWithNameFromBytes(List<Integer> bytes, int qType, int qClass) {
         ByteList encodedName = new ByteList(bytes);
-        ByteList qType = new ByteList(List.of(0xab, 0xcd));
-        ByteList qClass = new ByteList(List.of(0x34, 0x56));
-        return encodedName.append(qType, qClass);
+        ByteList qTypeBl = ByteList.fromInt(qType);
+        ByteList qClassBl = ByteList.fromInt(qClass);
+        return encodedName.append(qTypeBl, qClassBl);
     }
 
     public static Stream<Arguments> secondNames() {
@@ -150,8 +176,8 @@ class DecoderTest {
         int questionCount = 2;
         ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
 
-        ByteList question1 = questionWithNameFromBytes(bytes);
-        ByteList question2 = questionWithNameFromBytes(bytes);
+        ByteList question1 = questionWithNameFromBytes(bytes, 0xabcd, 0x3456);
+        ByteList question2 = questionWithNameFromBytes(bytes, 0xabcd, 0x3456);
         ByteList message = header
                 .append(question1, question2);
 

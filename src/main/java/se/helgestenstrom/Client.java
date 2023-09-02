@@ -36,7 +36,7 @@ public class Client {
 
         final Id id = new Id(numericalId);
         final Flags flags = new Flags(true);
-        final Question question = new Question("dns.google.com", "0001", "0001");
+        final Question question = new Question(new Name("dns.google.com"), 1, 1);
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(question));
 
         byte[] buf = dnsMessage.bytes();
