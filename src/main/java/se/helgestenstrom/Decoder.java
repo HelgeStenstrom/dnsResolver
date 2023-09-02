@@ -62,14 +62,15 @@ public class Decoder {
 
         int nextIndex = startingPoint;
         for (int i = 0; i < qdCount; i++) {
-            Pair<Name, Integer> result = nameDecoder.nameAndConsumes(encoded, startingPoint);
+            Pair<Name, Integer> result = nameDecoder.nameAndConsumes(encoded, nextIndex);
             Name name = result.first;
 
-            int qt = encoded.u16(nextIndex + result.second);
-            int qc = encoded.u16(nextIndex + result.second+2);
+            Integer consumedByName = result.second;
+            int qt = encoded.u16(nextIndex + consumedByName);
+            int qc = encoded.u16(nextIndex + consumedByName +2);
             Question question = new Question(name, qt, qc);
             collector.add(question);
-            nextIndex += result.second;
+            nextIndex += consumedByName + 4;
         }
         return collector;
     }

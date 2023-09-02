@@ -1,6 +1,5 @@
 package se.helgestenstrom;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,7 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DecoderTest {
 
@@ -169,15 +169,15 @@ class DecoderTest {
     @ParameterizedTest
     @MethodSource("secondNames")
     @DisplayName("Two equal questions, check second")
-    @Disabled("code not ready, not sure about direction.")
+    //@Disabled("code not ready, not sure about direction.")
     void twoEqualQuestions(List<Integer> bytes, List<String> expected) {
 
         // Setup
         int questionCount = 2;
         ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
 
-        ByteList question1 = questionWithNameFromBytes(bytes, 0xabcd, 0x3456);
-        ByteList question2 = questionWithNameFromBytes(bytes, 0xabcd, 0x3456);
+        ByteList question1 = questionWithNameFromBytes(bytes, 12, 34);
+        ByteList question2 = questionWithNameFromBytes(bytes, 1002, 1003);
         ByteList message = header
                 .append(question1, question2);
 
@@ -189,10 +189,14 @@ class DecoderTest {
 
         // Verify
         assertEquals(2, questions.size());
-        Question question = questions.get(1);
-        assertEquals(expected, question.getLabels());
+        Question q1 = questions.get(0);
+        Question q2 = questions.get(1);
+        assertEquals(expected, q2.getLabels());
+        assertEquals(12, q1.getType());
+        assertEquals(34, q1.getQClass());
+        assertEquals(1002, q2.getType());
+        assertEquals(1003, q2.getQClass());
 
-        fail("test not done");
     }
 
 
