@@ -158,10 +158,12 @@ class DecoderTest {
 
     public static Stream<Arguments> secondNames() {
         return Stream.of(
-                Arguments.of(List.of(
-                        1, (int) 'a',
-                        3, (int) 'b', (int) 'c', (int) 'd',
-                        0), List.of("a", "bcd"))
+                Arguments.of(
+                        List.of(
+                                1, (int) 'a',
+                                3, (int) 'b', (int) 'c', (int) 'd',
+                                0),
+                        List.of("a", "bcd"))
         );
     }
 
@@ -169,7 +171,6 @@ class DecoderTest {
     @ParameterizedTest
     @MethodSource("secondNames")
     @DisplayName("Two equal questions, check second")
-    //@Disabled("code not ready, not sure about direction.")
     void twoEqualQuestions(List<Integer> bytes, List<String> expected) {
 
         // Setup
@@ -199,6 +200,42 @@ class DecoderTest {
 
     }
 
+    /**
+     * Verifies that the second question name is the same as that of the first question,
+     * and that the type and class of the second question is what we expect.
+     */
+    @Test
+    @DisplayName("Two Questions, name of second  is pointer")
+    void twoQuestionsSecondPointer() {
+
+        // Setup
+        int questionCount = 2;
+
+        ByteList header = encodeHeader(0, 0, questionCount, 0, 0, 0);
+
+        List<Integer> q1Name = List.of(
+                3, (int) 'a',(int) 'b', (int) 'c',
+                3, (int) 'c', (int) 'o', (int) 'm',
+                0);
+        ByteList question1 = questionWithNameFromBytes(q1Name, 12, 34);
+        int firstNameLocation = header.size();
+        ByteList firstNamePointer = Decoder.pointerTo(firstNameLocation);
+        ByteList question2 = firstNamePointer.append(new ByteList(List.of(0x10, 0x23, 0x45, 0x67)));
+
+        ByteList message = header.append(question1, question2);
+        Decoder decoder = new Decoder(message);
+
+        // Exercise
+        List<Question> questions = decoder.getQuestions();
+
+        // Verify
+        assertEquals(2, questions.size());
+        Question secondQuestion = questions.get(1);
+        String secondName = secondQuestion.getName().toString();
+        assertEquals("abc.com", secondName);
+        assertEquals(0x1023, secondQuestion.getType());
+        assertEquals(0x4567, secondQuestion.getQClass());
+    }
 
     private static ByteList encodeHeader(int id, int flags, int qdCount, int anCount, int nsCount, int arCount) {
         List<Integer> idPart = ByteList.fromInt(id);
@@ -232,7 +269,7 @@ class DecoderTest {
         Name dn = decoder.nameFrom(0);
 
         // Verify
-        assertEquals(clearText, dn.getValue());
+        assertEquals(clearText, dn.toString());
     }
 
     @Test
@@ -252,7 +289,7 @@ class DecoderTest {
         Name dn = decoder.nameFrom(startingPoint);
 
         // Verify
-        assertEquals(clearText, dn.getValue());
+        assertEquals(clearText, dn.toString());
     }
 
     @Test
@@ -275,7 +312,7 @@ class DecoderTest {
         Name name = decoder.nameFrom(startingPoint);
 
         // Verify
-        assertEquals(name2, name.getValue());
+        assertEquals(name2, name.toString());
         // Since nothing follows the pointer, we know that only the
         // length of the pointer (2 bytes) is consumed.
 

@@ -73,10 +73,11 @@ public class ByteList extends ArrayList<Integer>  {
     }
 
      ByteList append(ByteList... lists) {
+         ByteList result = new ByteList(this);
          for (var list : lists) {
-            this.addAll(list);
+            result.addAll(list);
         }
-        return this;
+        return result;
     }
 
     boolean isPointer(int offset) {

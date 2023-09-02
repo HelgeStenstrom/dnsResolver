@@ -18,13 +18,6 @@ public class Name {
     }
 
 
-    /**
-     * @return the name
-     */
-    public String getValue() {
-        return toString();
-    }
-
     @Override
     public String toString() {
         return value;
