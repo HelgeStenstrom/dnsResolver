@@ -83,6 +83,10 @@ public class Decoder {
         return nameDecoder.nameFrom(encoded, startingPoint);
     }
 
+    public List<ResourceRecord> getAnswers() {
+        return List.of();
+    }
+
 
     /**
      * @param <T1> type of the first value

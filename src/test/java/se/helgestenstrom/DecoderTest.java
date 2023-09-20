@@ -1,5 +1,6 @@
 package se.helgestenstrom;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -336,5 +337,177 @@ class DecoderTest {
         Integer lsb = pair.get(1);
         assertEquals(0xc1, msb);
         assertEquals(0x05, lsb);
+    }
+
+    @Test
+    void noQuestionsNoAnswers() {
+
+        // Setup
+        ByteList wholeList = encodeHeader(0x12ab, 0, 0, 0, 0, 0);
+        Decoder decoder = new Decoder(wholeList);
+
+        // Exercise
+        List<ResourceRecord> answers = decoder.getAnswers();
+
+        // Verify
+        assertEquals(0, answers.size());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void oneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "abc.com";
+        int recordType = 0x4321;
+        int dataClass = 0x1002;
+        int timeToLive = 0x1003;
+        List<Integer> data = List.of(1, 2, 3, 5, 8);
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        List<ResourceRecord> answers = decoder.getAnswers();
+
+        // Verify
+        assertEquals(1, answers.size());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void recordNameOneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "abc.com";
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of();
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+
+        // Verify
+        assertEquals(domainName, resourceRecord.getName());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void recordTypeOneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "ignored";
+        int recordType = 0x4321;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of();
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+
+        // Verify
+        assertEquals(recordType, resourceRecord.getType());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void recordClassOneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "abc.com";
+        int recordType = 0x4321;
+        int dataClass = 0x1002;
+        int timeToLive = 0x1003;
+        List<Integer> data = List.of(1, 2, 3, 5, 8);
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+
+        // Verify
+        assertEquals(dataClass, resourceRecord.getRDataClass());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void recordTtlOneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "ignored";
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0x1003;
+        List<Integer> data = List.of(1, 2, 3, 5, 8);
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+
+        // Verify
+        assertEquals(timeToLive, resourceRecord.getTimeToLive());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void recordLengthOneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "ignored";
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of(1, 2, 3, 5);
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+
+        // Verify
+        assertEquals(data.size(), resourceRecord.getRdLength());
+        assertEquals(new ByteList(data), resourceRecord.getRData());
+    }
+
+    @Test
+    @Disabled("do noQuestionsNoAnswers first")
+    void recordDataOneAnswerNoQuestions() {
+        // Setup
+
+        String domainName = "ignored";
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of(1, 2, 3, 5, 8);
+
+        Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
+
+        // Exercise
+        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+
+        // Verify
+        assertEquals(new ByteList(data), resourceRecord.getRData());
+    }
+
+    private Decoder decoderWith(String domainName, int recordType, int dataClass, int timeToLive, List<Integer> data) {
+        ByteList encodedName = encodedText(domainName);
+        ByteList encodedAnswer = encodedName
+                .append(ByteList.fromInt(recordType))
+                .append(ByteList.fromInt(dataClass))
+                .append(ByteList.fromInt(timeToLive))
+                .append(ByteList.fromInt(data.size()))
+                .append(new ByteList(data))
+                .append(new ByteList())
+                ;
+
+        ByteList header = encodeHeader(0x12ab, 0, 0, 1, 0, 0);
+        ByteList wholeList = header.append(encodedAnswer);
+
+        return new Decoder(wholeList);
     }
 }
