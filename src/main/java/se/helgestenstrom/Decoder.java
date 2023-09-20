@@ -97,14 +97,14 @@ public class Decoder {
     private ArrayList<ParseResult<ResourceRecord>> getResourceRecords(int anCount, int startIndex) {
         ArrayList<ParseResult<ResourceRecord>> collector = new ArrayList<>();
         for (int i = 0; i < anCount; i++) {
-            ParseResult<ResourceRecord> resourceRecordParseResult = getOneAnswer(startIndex);
+            ParseResult<ResourceRecord> resourceRecordParseResult = getOneRecord(startIndex);
             collector.add(resourceRecordParseResult);
             startIndex = resourceRecordParseResult.getNextIndex();
         }
         return collector;
     }
 
-    private ParseResult<ResourceRecord> getOneAnswer(int nextIndex) {
+    private ParseResult<ResourceRecord> getOneRecord(int nextIndex) {
         ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
         Name name =  nameParseResult.getResult();
         int type = encoded.u16(nameParseResult.getNextIndex());
@@ -118,7 +118,15 @@ public class Decoder {
     }
 
     public List<ResourceRecord> getNameServerResources() {
-        return List.of();
+        int anCount = getHeader().getAnCount();
+        int nsCount = getHeader().getNsCount();
+
+        ParseResult<List<Question>> questions = getQuestions();
+        ArrayList<ParseResult<ResourceRecord>> answers = getResourceRecords(anCount, questions.getNextIndex());
+        var nsStartIndex = answers.stream()
+                .reduce((first, second) -> second).orElseThrow().getNextIndex();
+        ArrayList<ParseResult<ResourceRecord>> nsRecords = getResourceRecords(nsCount, nsStartIndex);
+        return nsRecords.stream().map(ParseResult::getResult).toList();
     }
 
 

@@ -1,6 +1,5 @@
 package se.helgestenstrom;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -536,7 +535,6 @@ class DecoderTest {
 
 
     @Test
-    @Disabled("refactoring")
     void oneAnswerOneNameServerResource() {
 
         // Setup
@@ -561,7 +559,7 @@ class DecoderTest {
         assertEquals(1, answers.size());
         assertEquals(1, nsRecords.size());
         ResourceRecord resourceRecord1 = answers.get(0);
-        ResourceRecord resourceRecord2 = nsRecords.get(1);
+        ResourceRecord resourceRecord2 = nsRecords.get(0);
         assertEquals("name1", resourceRecord1.getNameString());
         assertEquals("name2", resourceRecord2.getNameString());
     }
