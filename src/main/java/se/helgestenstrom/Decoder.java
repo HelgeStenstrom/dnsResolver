@@ -90,7 +90,18 @@ public class Decoder {
 
         ParseResult<List<Question>> questions = getQuestions();
 
-        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, questions.getNextIndex());
+        ArrayList<ParseResult<ResourceRecord>> collector = new ArrayList<>();
+        int nextIndex = questions.getNextIndex();
+        for (int i = 0; i < anCount; i++) {
+            ParseResult<ResourceRecord> resourceRecordParseResult = getOneAnswer(nextIndex);
+            collector.add(resourceRecordParseResult);
+            nextIndex = resourceRecordParseResult.getNextIndex();
+        }
+        return collector.stream().map(ParseResult::getResult).toList();
+    }
+
+    private ParseResult<ResourceRecord> getOneAnswer(int nextIndex) {
+        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
         Name name =  nameParseResult.getResult();
         int type = encoded.u16(nameParseResult.getNextIndex());
         int rDataClass = encoded.u16(nameParseResult.getNextIndex() + 2);
@@ -98,7 +109,8 @@ public class Decoder {
         int rdLength = encoded.u16(nameParseResult.getNextIndex() + 6);
         int rdIndex = nameParseResult.getNextIndex() + 8;
         ByteList rData = encoded.subList(rdIndex, rdIndex + rdLength);
-        return List.of(new ResourceRecord(name, type, rDataClass, timeToLive, rData));
+        ResourceRecord oneAnswer = new ResourceRecord(name, type, rDataClass, timeToLive, rData);
+        return new ParseResult<>(oneAnswer, rdIndex + rdLength);
     }
 
 

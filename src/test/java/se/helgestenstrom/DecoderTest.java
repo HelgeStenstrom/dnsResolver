@@ -456,7 +456,6 @@ class DecoderTest {
     }
 
     @Test
-   // @Disabled("do noQuestionsNoAnswers first")
     void recordLengthOneAnswerNoQuestions() {
         // Setup
 
@@ -496,19 +495,53 @@ class DecoderTest {
     }
 
     private Decoder decoderWith(String domainName, int recordType, int dataClass, int timeToLive, List<Integer> data) {
-        ByteList encodedName = encodedText(domainName);
-        ByteList encodedAnswer = encodedName
-                .append(ByteList.fromInt(recordType))
-                .append(ByteList.fromInt(dataClass))
-                .append(ByteList.fromInt(timeToLive))
-                .append(ByteList.fromInt(data.size()))
-                .append(new ByteList(data))
-                .append(new ByteList())
-                ;
+        ByteList encodedAnswer = encodeAnswer(domainName, recordType, dataClass, timeToLive, data);
 
         ByteList header = encodeHeader(0x12ab, 0, 0, 1, 0, 0);
         ByteList wholeList = header.append(encodedAnswer);
 
         return new Decoder(wholeList);
+    }
+
+
+
+    @Test
+    void namesOfTwoAnswersNoQuestions() {
+        // Setup
+
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of();
+
+        ByteList header = encodeHeader(0x12ab, 0, 0, 2, 0, 0);
+        ByteList wholeList = header
+                .append(encodeAnswer("name1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("name2", recordType, dataClass, timeToLive, data))
+                ;
+
+        Decoder decoder = new Decoder(wholeList);
+
+        // Exercise
+        List<ResourceRecord> answers = decoder.getAnswers();
+
+
+        // Verify
+        assertEquals(2, answers.size());
+        ResourceRecord resourceRecord1 = answers.get(0);
+        ResourceRecord resourceRecord2 = answers.get(1);
+        assertEquals("name1", resourceRecord1.getNameString());
+        assertEquals("name2", resourceRecord2.getNameString());
+    }
+
+    private ByteList encodeAnswer(String domainName, int recordType, int dataClass, int timeToLive, List<Integer> data) {
+        ByteList encodedName = encodedText(domainName);
+        return encodedName
+        .append(ByteList.fromInt(recordType))
+        .append(ByteList.fromInt(dataClass))
+        .append(ByteList.fromInt(timeToLive))
+        .append(ByteList.fromInt(data.size()))
+        .append(new ByteList(data))
+        .append(new ByteList());
     }
 }
