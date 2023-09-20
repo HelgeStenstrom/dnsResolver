@@ -118,16 +118,37 @@ public class Decoder {
     }
 
     public List<ResourceRecord> getNameServerResources() {
+        ArrayList<ParseResult<ResourceRecord>> nsRecords = getNameServerResults();
+
+        return nsRecords.stream()
+                .map(ParseResult::getResult)
+                .toList();
+    }
+
+    private ArrayList<ParseResult<ResourceRecord>> getNameServerResults() {
         int anCount = getHeader().getAnCount();
         int nsCount = getHeader().getNsCount();
 
         ParseResult<List<Question>> questions = getQuestions();
         ArrayList<ParseResult<ResourceRecord>> answers = getResourceRecords(anCount, questions.getNextIndex());
-        var nsStartIndex = answers.stream()
-                .reduce((first, second) -> second).orElseThrow().getNextIndex();
-        ArrayList<ParseResult<ResourceRecord>> nsRecords = getResourceRecords(nsCount, nsStartIndex);
-        return nsRecords.stream().map(ParseResult::getResult).toList();
+
+        int nsStartIndex = answers.stream()
+                .reduce((first, second) -> second)
+                .orElseThrow()
+                .getNextIndex();
+
+        return getResourceRecords(nsCount, nsStartIndex);
     }
 
 
+    public List<ResourceRecord> getAdditionalRecords() {
+        int nextIndex = getNameServerResults().stream()
+                .reduce((first, second) -> second)
+                .orElseThrow()
+                .getNextIndex();
+        ArrayList<ParseResult<ResourceRecord>> resourceRecords = getResourceRecords(getHeader().getArCount(), nextIndex);
+        return resourceRecords.stream()
+                .map(ParseResult::getResult)
+                .toList();
+    }
 }

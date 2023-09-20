@@ -558,10 +558,49 @@ class DecoderTest {
         // Verify
         assertEquals(1, answers.size());
         assertEquals(1, nsRecords.size());
-        ResourceRecord resourceRecord1 = answers.get(0);
-        ResourceRecord resourceRecord2 = nsRecords.get(0);
-        assertEquals("name1", resourceRecord1.getNameString());
-        assertEquals("name2", resourceRecord2.getNameString());
+        ResourceRecord answerRecord = answers.get(0);
+        ResourceRecord nsRecord = nsRecords.get(0);
+        assertEquals("name1", answerRecord.getNameString());
+        assertEquals("name2", nsRecord.getNameString());
+    }
+
+    @Test
+    void multipleResourceRecords() {
+
+        // Setup
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of();
+
+        ByteList header = encodeHeader(0x12ab, 0, 0, 1, 2, 3);
+        ByteList wholeList = header
+                .append(encodeAnswer("an1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ns1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ns2", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ar1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ar2", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ar3", recordType, dataClass, timeToLive, data))
+                ;
+
+        Decoder decoder = new Decoder(wholeList);
+
+        // Exercise
+        List<ResourceRecord> answers = decoder.getAnswers();
+        List<ResourceRecord> nsRecords = decoder.getNameServerResources();
+        List<ResourceRecord> arRecords = decoder.getAdditionalRecords();
+
+
+        // Verify
+        assertEquals(1, answers.size());
+        assertEquals(2, nsRecords.size());
+        assertEquals(3, arRecords.size());
+        ResourceRecord answerRecord = answers.get(0);
+        ResourceRecord nsRecord = nsRecords.get(0);
+        assertEquals("an1", answerRecord.getNameString());
+        assertEquals("ns1", nsRecord.getNameString());
+        List<String> arNames = arRecords.stream().map(ResourceRecord::getNameString).toList();
+        assertEquals(List.of("ar1", "ar2", "ar3"), arNames);
     }
 
     private ByteList encodeAnswer(String domainName, int recordType, int dataClass, int timeToLive, List<Integer> data) {
