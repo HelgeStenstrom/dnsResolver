@@ -538,8 +538,8 @@ class DecoderTest {
     @Test
     @Disabled("refactoring")
     void oneAnswerOneNameServerResource() {
-        // Setup
 
+        // Setup
         int recordType = 0;
         int dataClass = 0;
         int timeToLive = 0;

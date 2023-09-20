@@ -122,30 +122,4 @@ public class Decoder {
     }
 
 
-    /**
-     * @param <T1> type of the first value
-     * @param <T2> type of the second value
-     */
-    public static class Pair<T1, T2> {
-        public T1 getFirst() {
-            return first;
-        }
-
-        public T2 getSecond() {
-            return second;
-        }
-
-        private final T1 first;
-        private final T2 second;
-
-        /**
-         * @param first  value
-         * @param second value
-         */
-        public Pair(T1 first, T2 second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-
 }

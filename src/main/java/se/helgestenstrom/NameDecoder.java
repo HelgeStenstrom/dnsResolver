@@ -48,25 +48,16 @@ public class NameDecoder {
         return nameFrom(partial);
     }
 
-    /**
-     * @param encoded full list of the encoded message
-     * @param startingPoint where the name starts in the encoded message
-     * @return pair of {@link Name} and number of consumed bytes for the name
-     */
-    public Decoder.Pair<Name, Integer> nameAndConsumes(ByteList encoded, int startingPoint) {
-        Optional<Integer> maybePointer = encoded.pointerValue(startingPoint);
+    ParseResult<Name> nameAndNext(ByteList encoded, int nextIndex) {
+        Optional<Integer> maybePointer = encoded.pointerValue(nextIndex);
         if (maybePointer.isPresent()) {
             Name name = nameFrom(encoded, maybePointer.get());
             int consumed = 2;
-            return new Decoder.Pair<>(name, consumed);
+            return new ParseResult<>(name, nextIndex + consumed);
+        } else {
+            Name name = nameFrom(encoded, nextIndex);
+            int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
+            return new ParseResult<>(name, nextIndex + sum + 1);
         }
-        Name name = nameFrom(encoded, startingPoint);
-        int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
-        return new Decoder.Pair<>(name, sum + 1);
-    }
-
-    ParseResult<Name> nameAndNext(ByteList encoded, int nextIndex) {
-        Decoder.Pair<Name, Integer> result = nameAndConsumes(encoded, nextIndex);
-        return new ParseResult<>(result.getFirst(), nextIndex + result.getSecond());
     }
 }
