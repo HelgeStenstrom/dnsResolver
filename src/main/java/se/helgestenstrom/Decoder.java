@@ -12,6 +12,7 @@ public class Decoder {
 
     /**
      * Decodes a message and creates various items of domain types
+     *
      * @param encoded message
      */
     public Decoder(ByteList encoded) {
@@ -48,8 +49,7 @@ public class Decoder {
         return new Header(id, new Flags(flags), qdCount, anCount, nsCount, arCount);
     }
 
-    public List<Question> getQuestions() {
-
+    public ParseResult<List<Question>> getQuestions() {
         int qdCount = getHeader().getQdCount();
 
         int startingPoint = 12;
@@ -57,7 +57,7 @@ public class Decoder {
         return parseQuestions(qdCount, startingPoint, nameDecoder, encoded);
     }
 
-    private List<Question> parseQuestions(int qdCount, final int startingPoint, NameDecoder nameDecoder, ByteList encoded) {
+    private ParseResult<List<Question>> parseQuestions(int qdCount, final int startingPoint, NameDecoder nameDecoder, ByteList encoded) {
         List<Question> collector = new ArrayList<>();
 
         int nextIndex = startingPoint;
@@ -67,12 +67,12 @@ public class Decoder {
 
             Integer consumedByName = result.second;
             int qt = encoded.u16(nextIndex + consumedByName);
-            int qc = encoded.u16(nextIndex + consumedByName +2);
+            int qc = encoded.u16(nextIndex + consumedByName + 2);
             Question question = new Question(name, qt, qc);
             collector.add(question);
             nextIndex += consumedByName + 4;
         }
-        return collector;
+        return new ParseResult<>(collector, nextIndex);
     }
 
     /**
@@ -84,7 +84,16 @@ public class Decoder {
     }
 
     public List<ResourceRecord> getAnswers() {
-        return List.of();
+        int anCount = getHeader().getAnCount();
+        if (anCount == 0)
+            return List.of();
+
+        ParseResult<List<Question>> questions = getQuestions();
+        int nextIndex = questions.getNextIndex();
+
+        Name name = nameFrom(nextIndex);
+
+        return List.of(new ResourceRecord(name));
     }
 
 
@@ -97,7 +106,7 @@ public class Decoder {
         private final T2 second;
 
         /**
-         * @param first value
+         * @param first  value
          * @param second value
          */
         public Pair(T1 first, T2 second) {
@@ -105,4 +114,5 @@ public class Decoder {
             this.second = second;
         }
     }
+
 }

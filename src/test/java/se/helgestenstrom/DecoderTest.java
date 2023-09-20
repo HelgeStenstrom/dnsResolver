@@ -114,7 +114,9 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-        List<Question> questions = decoder.getQuestions();
+
+        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
+        List<Question> questions = listParseResult.getResult();
 
 
         // Verify
@@ -140,7 +142,9 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-        List<Question> questions = decoder.getQuestions();
+
+        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
+        List<Question> questions = listParseResult.getResult();
 
 
         // Verify
@@ -186,7 +190,9 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-        List<Question> questions = decoder.getQuestions();
+
+        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
+        List<Question> questions = listParseResult.getResult();
 
 
         // Verify
@@ -227,7 +233,9 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-        List<Question> questions = decoder.getQuestions();
+
+        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
+        List<Question> questions = listParseResult.getResult();
 
         // Verify
         assertEquals(2, questions.size());
@@ -354,7 +362,6 @@ class DecoderTest {
     }
 
     @Test
-    @Disabled("do noQuestionsNoAnswers first")
     void oneAnswerNoQuestions() {
         // Setup
 
@@ -374,7 +381,6 @@ class DecoderTest {
     }
 
     @Test
-    @Disabled("do noQuestionsNoAnswers first")
     void recordNameOneAnswerNoQuestions() {
         // Setup
 
@@ -390,7 +396,7 @@ class DecoderTest {
         ResourceRecord resourceRecord = decoder.getAnswers().get(0);
 
         // Verify
-        assertEquals(domainName, resourceRecord.getName());
+        assertEquals(domainName, resourceRecord.getNameString());
     }
 
     @Test
