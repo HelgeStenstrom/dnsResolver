@@ -64,4 +64,9 @@ public class NameDecoder {
         int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
         return new Decoder.Pair<>(name, sum + 1);
     }
+
+    ParseResult<Name> nameAndNext(ByteList encoded, int nextIndex) {
+        Decoder.Pair<Name, Integer> result = nameAndConsumes(encoded, nextIndex);
+        return new ParseResult<>(result.getFirst(), nextIndex + result.getSecond());
+    }
 }

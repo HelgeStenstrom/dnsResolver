@@ -400,7 +400,6 @@ class DecoderTest {
     }
 
     @Test
-    @Disabled("do noQuestionsNoAnswers first")
     void recordTypeOneAnswerNoQuestions() {
         // Setup
 

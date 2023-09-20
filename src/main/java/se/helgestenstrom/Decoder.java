@@ -62,15 +62,15 @@ public class Decoder {
 
         int nextIndex = startingPoint;
         for (int i = 0; i < qdCount; i++) {
-            Pair<Name, Integer> result = nameDecoder.nameAndConsumes(encoded, nextIndex);
-            Name name = result.first;
 
-            Integer consumedByName = result.second;
-            int qt = encoded.u16(nextIndex + consumedByName);
-            int qc = encoded.u16(nextIndex + consumedByName + 2);
-            Question question = new Question(name, qt, qc);
+            ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
+
+            int nextIndex1 = nameParseResult.getNextIndex();
+            int qt = encoded.u16(nextIndex1);
+            int qc = encoded.u16(nextIndex1 + 2);
+            Question question = new Question(nameParseResult.getResult(), qt, qc);
             collector.add(question);
-            nextIndex += consumedByName + 4;
+            nextIndex = nextIndex1 + 4;
         }
         return new ParseResult<>(collector, nextIndex);
     }
@@ -91,9 +91,11 @@ public class Decoder {
         ParseResult<List<Question>> questions = getQuestions();
         int nextIndex = questions.getNextIndex();
 
-        Name name = nameFrom(nextIndex);
-
-        return List.of(new ResourceRecord(name));
+        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
+        Name name =  nameParseResult.getResult();
+        int nextIndex1 = nameParseResult.getNextIndex();
+        int type = encoded.u16(nextIndex1);
+        return List.of(new ResourceRecord(name, type));
     }
 
 
@@ -102,6 +104,14 @@ public class Decoder {
      * @param <T2> type of the second value
      */
     public static class Pair<T1, T2> {
+        public T1 getFirst() {
+            return first;
+        }
+
+        public T2 getSecond() {
+            return second;
+        }
+
         private final T1 first;
         private final T2 second;
 

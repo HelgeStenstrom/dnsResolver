@@ -5,17 +5,21 @@ package se.helgestenstrom;
  */
 public class ResourceRecord {
     private final Name name;
+    private final int type;
 
 
     /**
      * @param name typically a domain name.
+     * @param type u16 of the type according to RFC 1035, section 4.1.3
      */
-    public ResourceRecord(Name name) {
+    public ResourceRecord(Name name, int type) {
         this.name = name;
+        this.type = type;
+
     }
 
     public int getType() {
-        return -1;
+        return type;
     }
 
     public String getNameString() {
