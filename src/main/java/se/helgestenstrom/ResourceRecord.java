@@ -5,17 +5,19 @@ package se.helgestenstrom;
  */
 public class ResourceRecord {
     private final Name name;
+    private final int rDataClass;
     private final int type;
 
 
     /**
      * @param name typically a domain name.
      * @param type u16 of the type according to RFC 1035, section 4.1.3
+     * @param rDataClass u16 of the class according to RFC 1035, section 4.1.3
      */
-    public ResourceRecord(Name name, int type) {
+    public ResourceRecord(Name name, int type, int rDataClass) {
         this.name = name;
         this.type = type;
-
+        this.rDataClass = rDataClass;
     }
 
     public int getType() {
@@ -27,7 +29,7 @@ public class ResourceRecord {
     }
 
     public int getRDataClass() {
-        return -1;
+        return rDataClass;
     }
 
     public int getTimeToLive() {

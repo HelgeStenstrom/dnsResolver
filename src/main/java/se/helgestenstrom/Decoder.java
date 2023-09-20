@@ -89,13 +89,12 @@ public class Decoder {
             return List.of();
 
         ParseResult<List<Question>> questions = getQuestions();
-        int nextIndex = questions.getNextIndex();
 
-        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
+        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, questions.getNextIndex());
         Name name =  nameParseResult.getResult();
-        int nextIndex1 = nameParseResult.getNextIndex();
-        int type = encoded.u16(nextIndex1);
-        return List.of(new ResourceRecord(name, type));
+        int type = encoded.u16(nameParseResult.getNextIndex());
+        int rDataClass = encoded.u16(nameParseResult.getNextIndex() + 2);
+        return List.of(new ResourceRecord(name, type, rDataClass));
     }
 
 
