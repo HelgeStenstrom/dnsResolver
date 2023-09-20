@@ -31,7 +31,7 @@ class DnsMessageTest {
         Flags flags = new Flags(true);
         String host = "dns.google.com";
         final Question question = new Question(new Name(host), 1, 1);
-        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question), List.of(), List.of(), List.of());
 
         // Exercise
         var message = dnsMessage.byteList().hex();
@@ -56,7 +56,7 @@ class DnsMessageTest {
         Flags flags = new Flags(desiredRecursion);
         String host = "dns.google.com";
         final Question question = new Question(new Name(host), 1, 1);
-        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question), List.of(), List.of(), List.of());
 
         // Exercise
         var message = dnsMessage.byteList().hex();
@@ -80,7 +80,7 @@ class DnsMessageTest {
         Id id = new Id(22);
         Flags flags = new Flags(true);
         final Question question = new Question(new Name(host), 1, 1);
-        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question));
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question), List.of(), List.of(), List.of());
 
         // Exercise
         var message = dnsMessage.byteList().hex();
@@ -97,7 +97,7 @@ class DnsMessageTest {
         final Flags flags = new Flags(true);
         String host = "examplehost";
         final Question abc = new Question(new Name(host), 1, 1);
-        DnsMessage dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(abc));
+        DnsMessage dnsMessage = new DnsMessage(new Header(id, flags, 1, 20, 21, 22), List.of(abc), List.of(), List.of(), List.of());
 
         // Exercise
         byte[] bytes = dnsMessage.bytes();

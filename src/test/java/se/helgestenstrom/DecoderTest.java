@@ -603,6 +603,49 @@ class DecoderTest {
         assertEquals(List.of("ar1", "ar2", "ar3"), arNames);
     }
 
+    @Test
+    void completeDnsMessage() {
+
+        // Setup
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of();
+
+        ByteList encodedHeader = encodeHeader(0x12ab, 0, 1, 1, 2, 3);
+        List<Integer> q1Name = List.of(
+                3, (int) 'a',(int) 'b', (int) 'c',
+                3, (int) 'c', (int) 'o', (int) 'm',
+                0);
+        ByteList wholeList = encodedHeader
+                .append(questionWithNameFromBytes(q1Name, 13, 45))
+                .append(encodeAnswer("an1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ns1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ns2", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ar1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ar2", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("ar3", recordType, dataClass, timeToLive, data))
+                ;
+
+        Decoder decoder = new Decoder(wholeList);
+
+        // Exercise
+        DnsMessage message = decoder.getDnsMessage();
+
+        // Verify
+        Header header = message.getHeader();
+        assertEquals(0x12ab, header.getId().id());
+        assertEquals(1, message.getQuestions().size());
+        Question question = message.getQuestions().get(0);
+        String nameString = question.getName().toString();
+        assertEquals("abc.com", nameString);
+
+        assertEquals(List.of("an1"), message.getAnswers().stream().map(ResourceRecord::getNameString).toList());
+        assertEquals(List.of("ns1", "ns2"), message.getNameServerResources().stream().map(ResourceRecord::getNameString).toList());
+        assertEquals(List.of("ar1", "ar2", "ar3"), message.getAdditionalRecords().stream().map(ResourceRecord::getNameString).toList());
+
+    }
+
     private ByteList encodeAnswer(String domainName, int recordType, int dataClass, int timeToLive, List<Integer> data) {
         ByteList encodedName = encodedText(domainName);
         return encodedName

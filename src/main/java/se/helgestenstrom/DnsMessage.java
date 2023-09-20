@@ -8,16 +8,25 @@ import java.util.List;
 public class DnsMessage {
 
 
+    private final List<ResourceRecord> additionalResources;
+    private final List<ResourceRecord> answers;
     private final Header header;
-    private final List<Question> questions;
+    private final List<ResourceRecord> nameServerResources;
 
+    private final List<Question> questions;
     /**
      * @param header The Header of RFC 1035, section 4.1
      * @param questions zero or more Questions of RFC 1035, section 4.1
+     * @param answers List of answers according to RFC 1035, section 4.1.1
+     * @param nameServerResources List of name server resources according to RFC 1035, section 4.1.1
+     * @param additionalResources List of additional resources according to RFC 1035, section 4.1.1
      */
-    public DnsMessage(Header header, List<Question> questions) {
+    public DnsMessage(Header header, List<Question> questions, List<ResourceRecord> answers, List<ResourceRecord> nameServerResources, List<ResourceRecord> additionalResources) {
         this.header = header;
         this.questions = questions;
+        this.answers = answers;
+        this.nameServerResources = nameServerResources;
+        this.additionalResources = additionalResources;
     }
 
 
@@ -37,5 +46,25 @@ public class DnsMessage {
     public byte[] bytes() {
 
         return byteList().asArray();
+    }
+
+    public Header getHeader() {
+        return header;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<ResourceRecord> getAnswers() {
+        return answers;
+    }
+
+    public List<ResourceRecord> getNameServerResources() {
+        return nameServerResources;
+    }
+
+    public List<ResourceRecord> getAdditionalRecords() {
+        return additionalResources;
     }
 }

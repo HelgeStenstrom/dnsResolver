@@ -151,4 +151,8 @@ public class Decoder {
                 .map(ParseResult::getResult)
                 .toList();
     }
+
+    public DnsMessage getDnsMessage() {
+        return new DnsMessage(getHeader(), getQuestions().getResult(), getAnswers(), getNameServerResources(), getAdditionalRecords());
+    }
 }
