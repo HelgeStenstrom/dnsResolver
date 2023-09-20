@@ -95,7 +95,10 @@ public class Decoder {
         int type = encoded.u16(nameParseResult.getNextIndex());
         int rDataClass = encoded.u16(nameParseResult.getNextIndex() + 2);
         int timeToLive = encoded.u16(nameParseResult.getNextIndex() + 4);
-        return List.of(new ResourceRecord(name, type, rDataClass, timeToLive));
+        int rdLength = encoded.u16(nameParseResult.getNextIndex() + 6);
+        int rdIndex = nameParseResult.getNextIndex() + 8;
+        ByteList rData = encoded.subList(rdIndex, rdIndex + rdLength);
+        return List.of(new ResourceRecord(name, type, rDataClass, timeToLive, rData));
     }
 
 

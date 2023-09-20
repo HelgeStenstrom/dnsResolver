@@ -5,6 +5,7 @@ package se.helgestenstrom;
  */
 public class ResourceRecord {
     private final Name name;
+    private final ByteList rData;
     private final int rDataClass;
     private final int timeToLive;
     private final int type;
@@ -15,12 +16,14 @@ public class ResourceRecord {
      * @param type u16 of the type according to RFC 1035, section 4.1.3
      * @param rDataClass u16 of the class according to RFC 1035, section 4.1.3
      * @param timeToLive u16 of the TTL, Time to Live, according to RFC 1035, section 4.1.3
+     * @param rData the RDATA according to RFC 1035, section 4.1.3
      */
-    public ResourceRecord(Name name, int type, int rDataClass, int timeToLive) {
+    public ResourceRecord(Name name, int type, int rDataClass, int timeToLive, ByteList rData) {
         this.name = name;
         this.type = type;
         this.rDataClass = rDataClass;
         this.timeToLive = timeToLive;
+        this.rData = rData;
     }
 
     public int getType() {
@@ -40,10 +43,10 @@ public class ResourceRecord {
     }
 
     public int getRdLength() {
-        return -1;
+        return rData.size();
     }
 
     public ByteList getRData() {
-        return new ByteList();
+        return rData;
     }
 }

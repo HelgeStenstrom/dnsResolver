@@ -1,6 +1,5 @@
 package se.helgestenstrom;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -457,7 +456,7 @@ class DecoderTest {
     }
 
     @Test
-    @Disabled("do noQuestionsNoAnswers first")
+   // @Disabled("do noQuestionsNoAnswers first")
     void recordLengthOneAnswerNoQuestions() {
         // Setup
 
@@ -478,7 +477,6 @@ class DecoderTest {
     }
 
     @Test
-    @Disabled("do noQuestionsNoAnswers first")
     void recordDataOneAnswerNoQuestions() {
         // Setup
 
