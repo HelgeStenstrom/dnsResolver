@@ -94,7 +94,8 @@ public class Decoder {
         Name name =  nameParseResult.getResult();
         int type = encoded.u16(nameParseResult.getNextIndex());
         int rDataClass = encoded.u16(nameParseResult.getNextIndex() + 2);
-        return List.of(new ResourceRecord(name, type, rDataClass));
+        int timeToLive = encoded.u16(nameParseResult.getNextIndex() + 4);
+        return List.of(new ResourceRecord(name, type, rDataClass, timeToLive));
     }
 
 
