@@ -85,19 +85,23 @@ public class Decoder {
 
     public List<ResourceRecord> getAnswers() {
         int anCount = getHeader().getAnCount();
-        if (anCount == 0)
-            return List.of();
 
         ParseResult<List<Question>> questions = getQuestions();
 
+        return getResourceRecords(anCount, questions.getNextIndex())
+                .stream()
+                .map(ParseResult::getResult)
+                .toList();
+    }
+
+    private ArrayList<ParseResult<ResourceRecord>> getResourceRecords(int anCount, int startIndex) {
         ArrayList<ParseResult<ResourceRecord>> collector = new ArrayList<>();
-        int nextIndex = questions.getNextIndex();
         for (int i = 0; i < anCount; i++) {
-            ParseResult<ResourceRecord> resourceRecordParseResult = getOneAnswer(nextIndex);
+            ParseResult<ResourceRecord> resourceRecordParseResult = getOneAnswer(startIndex);
             collector.add(resourceRecordParseResult);
-            nextIndex = resourceRecordParseResult.getNextIndex();
+            startIndex = resourceRecordParseResult.getNextIndex();
         }
-        return collector.stream().map(ParseResult::getResult).toList();
+        return collector;
     }
 
     private ParseResult<ResourceRecord> getOneAnswer(int nextIndex) {
@@ -111,6 +115,10 @@ public class Decoder {
         ByteList rData = encoded.subList(rdIndex, rdIndex + rdLength);
         ResourceRecord oneAnswer = new ResourceRecord(name, type, rDataClass, timeToLive, rData);
         return new ParseResult<>(oneAnswer, rdIndex + rdLength);
+    }
+
+    public List<ResourceRecord> getNameServerResources() {
+        return List.of();
     }
 
 

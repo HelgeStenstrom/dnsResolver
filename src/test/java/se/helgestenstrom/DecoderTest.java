@@ -1,5 +1,6 @@
 package se.helgestenstrom;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -504,7 +505,6 @@ class DecoderTest {
     }
 
 
-
     @Test
     void namesOfTwoAnswersNoQuestions() {
         // Setup
@@ -530,6 +530,38 @@ class DecoderTest {
         assertEquals(2, answers.size());
         ResourceRecord resourceRecord1 = answers.get(0);
         ResourceRecord resourceRecord2 = answers.get(1);
+        assertEquals("name1", resourceRecord1.getNameString());
+        assertEquals("name2", resourceRecord2.getNameString());
+    }
+
+
+    @Test
+    @Disabled("refactoring")
+    void oneAnswerOneNameServerResource() {
+        // Setup
+
+        int recordType = 0;
+        int dataClass = 0;
+        int timeToLive = 0;
+        List<Integer> data = List.of();
+
+        ByteList header = encodeHeader(0x12ab, 0, 0, 1, 1, 0);
+        ByteList wholeList = header
+                .append(encodeAnswer("name1", recordType, dataClass, timeToLive, data))
+                .append(encodeAnswer("name2", recordType, dataClass, timeToLive, data));
+
+        Decoder decoder = new Decoder(wholeList);
+
+        // Exercise
+        List<ResourceRecord> answers = decoder.getAnswers();
+        List<ResourceRecord> nsRecords = decoder.getNameServerResources();
+
+
+        // Verify
+        assertEquals(1, answers.size());
+        assertEquals(1, nsRecords.size());
+        ResourceRecord resourceRecord1 = answers.get(0);
+        ResourceRecord resourceRecord2 = nsRecords.get(1);
         assertEquals("name1", resourceRecord1.getNameString());
         assertEquals("name2", resourceRecord2.getNameString());
     }
