@@ -76,23 +76,12 @@ public class Decoder {
     }
 
 
+
+
     public List<ResourceRecord> getAnswers() {
-        // TODO: Make this method a wrapper over getDnsMessage.getAnswers()
-
-        // TODO: Find why getDnsMessage has some side effect.
-
-        //getNameServerResults();
-
-
-        int anCount = getHeader().getAnCount();
-
-        ParseResult<List<Question>> questions = getQuestions();
-
-        return getResourceRecords(anCount, questions.getNextIndex())
-                .stream()
-                .map(ParseResult::getResult)
-                .toList();
+        return getDnsMessage().getAnswers();
     }
+
 
     private List<ResourceRecord> getAnswers2() {
         int anCount = getHeader().getAnCount();
@@ -144,11 +133,12 @@ public class Decoder {
         int nsCount = getHeader().getNsCount();
 
         ParseResult<List<Question>> questions = getQuestions();
-        ArrayList<ParseResult<ResourceRecord>> answers = getResourceRecords(anCount, questions.getNextIndex());
+        int startIndex = questions.getNextIndex();
+        ArrayList<ParseResult<ResourceRecord>> answers = getResourceRecords(anCount, startIndex);
 
         int nsStartIndex = answers.stream()
                 .reduce((first, second) -> second)
-                .orElseThrow()
+                .orElse(new ParseResult<>(null, startIndex))
                 .getNextIndex();
 
         return getResourceRecords(nsCount, nsStartIndex);
@@ -163,7 +153,7 @@ public class Decoder {
     private List<ResourceRecord> getAdditionalRecords2() {
         int nextIndex = getNameServerResults().stream()
                 .reduce((first, second) -> second)
-                .orElseThrow()
+                .orElse(new ParseResult<>(null, 0))
                 .getNextIndex();
         ArrayList<ParseResult<ResourceRecord>> resourceRecords = getResourceRecords(getHeader().getArCount(), nextIndex);
         return resourceRecords.stream()

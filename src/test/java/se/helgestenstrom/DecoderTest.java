@@ -300,6 +300,8 @@ class DecoderTest {
         // Exercise
         List<ResourceRecord> answers = decoder.getAnswers();
 
+        decoder.getDnsMessage();
+
         // Verify
         assertEquals(0, answers.size());
     }
