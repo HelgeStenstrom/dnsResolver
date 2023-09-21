@@ -110,9 +110,6 @@ public class Decoder {
         return new ParseResult<>(oneAnswer, rdIndex + rdLength);
     }
 
-    public List<ResourceRecord> getNameServerResources() {
-        return getDnsMessage().getNameServerResources();
-    }
     private List<ResourceRecord> getNameServerResources2() {
         ArrayList<ParseResult<ResourceRecord>> nsRecords = getNameServerResults();
 
@@ -136,12 +133,6 @@ public class Decoder {
 
         return getResourceRecords(nsCount, nsStartIndex);
     }
-
-
-    public List<ResourceRecord> getAdditionalRecords() {
-        return getDnsMessage().getAdditionalRecords();
-    }
-
 
     private List<ResourceRecord> getAdditionalRecords2() {
         int nextIndex = getNameServerResults().stream()

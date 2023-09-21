@@ -486,7 +486,7 @@ class DecoderTest {
 
         // Exercise
         List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
-        List<ResourceRecord> nsRecords = decoder.getNameServerResources();
+        List<ResourceRecord> nsRecords = decoder.getDnsMessage().getNameServerResources();
 
 
         // Verify
@@ -521,8 +521,8 @@ class DecoderTest {
 
         // Exercise
         List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
-        List<ResourceRecord> nsRecords = decoder.getNameServerResources();
-        List<ResourceRecord> arRecords = decoder.getAdditionalRecords();
+        List<ResourceRecord> nsRecords = decoder.getDnsMessage().getNameServerResources();
+        List<ResourceRecord> arRecords = decoder.getDnsMessage().getAdditionalRecords();
 
 
         // Verify
