@@ -113,9 +113,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-
-        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
-        List<Question> questions = listParseResult.getResult();
+        List<Question> questions = decoder.getDnsMessage().getQuestions();
 
 
         // Verify
@@ -141,10 +139,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-
-        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
-        List<Question> questions = listParseResult.getResult();
-
+        List<Question> questions = decoder.getDnsMessage().getQuestions();
 
         // Verify
         assertEquals(1, questions.size());
@@ -189,10 +184,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-
-        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
-        List<Question> questions = listParseResult.getResult();
-
+        List<Question> questions = decoder.getDnsMessage().getQuestions();
 
         // Verify
         assertEquals(2, questions.size());
@@ -232,9 +224,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(message);
 
         // Exercise
-
-        ParseResult<List<Question>> listParseResult = decoder.getQuestions();
-        List<Question> questions = listParseResult.getResult();
+        List<Question> questions = decoder.getDnsMessage().getQuestions();
 
         // Verify
         assertEquals(2, questions.size());
@@ -298,9 +288,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(wholeList);
 
         // Exercise
-        List<ResourceRecord> answers = decoder.getAnswers();
-
-        decoder.getDnsMessage();
+        List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
 
         // Verify
         assertEquals(0, answers.size());
@@ -319,7 +307,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        List<ResourceRecord> answers = decoder.getAnswers();
+        List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
 
         // Verify
         assertEquals(1, answers.size());
@@ -338,7 +326,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+        ResourceRecord resourceRecord = decoder.getDnsMessage().getAnswers().get(0);
 
         // Verify
         assertEquals(domainName, resourceRecord.getNameString());
@@ -357,7 +345,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+        ResourceRecord resourceRecord = decoder.getDnsMessage().getAnswers().get(0);
 
         // Verify
         assertEquals(recordType, resourceRecord.getType());
@@ -376,7 +364,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+        ResourceRecord resourceRecord = decoder.getDnsMessage().getAnswers().get(0);
 
         // Verify
         assertEquals(dataClass, resourceRecord.getRDataClass());
@@ -395,7 +383,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+        ResourceRecord resourceRecord = decoder.getDnsMessage().getAnswers().get(0);
 
         // Verify
         assertEquals(timeToLive, resourceRecord.getTimeToLive());
@@ -414,7 +402,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+        ResourceRecord resourceRecord = decoder.getDnsMessage().getAnswers().get(0);
 
         // Verify
         assertEquals(data.size(), resourceRecord.getRdLength());
@@ -434,7 +422,7 @@ class DecoderTest {
         Decoder decoder = decoderWith(domainName, recordType, dataClass, timeToLive, data);
 
         // Exercise
-        ResourceRecord resourceRecord = decoder.getAnswers().get(0);
+        ResourceRecord resourceRecord = decoder.getDnsMessage().getAnswers().get(0);
 
         // Verify
         assertEquals(new ByteList(data), resourceRecord.getRData());
@@ -468,7 +456,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(wholeList);
 
         // Exercise
-        List<ResourceRecord> answers = decoder.getAnswers();
+        List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
 
 
         // Verify
@@ -497,7 +485,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(wholeList);
 
         // Exercise
-        List<ResourceRecord> answers = decoder.getAnswers();
+        List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
         List<ResourceRecord> nsRecords = decoder.getNameServerResources();
 
 
@@ -532,7 +520,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(wholeList);
 
         // Exercise
-        List<ResourceRecord> answers = decoder.getAnswers();
+        List<ResourceRecord> answers = decoder.getDnsMessage().getAnswers();
         List<ResourceRecord> nsRecords = decoder.getNameServerResources();
         List<ResourceRecord> arRecords = decoder.getAdditionalRecords();
 

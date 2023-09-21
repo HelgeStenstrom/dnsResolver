@@ -49,7 +49,7 @@ public class Decoder {
         return new Header(id, new Flags(flags), qdCount, anCount, nsCount, arCount);
     }
 
-    public ParseResult<List<Question>> getQuestions() {
+    private ParseResult<List<Question>> getQuestions() {
         int qdCount = getHeader().getQdCount();
 
         int startingPoint = 12;
@@ -76,14 +76,7 @@ public class Decoder {
     }
 
 
-
-
-    public List<ResourceRecord> getAnswers() {
-        return getDnsMessage().getAnswers();
-    }
-
-
-    private List<ResourceRecord> getAnswers2() {
+    private List<ResourceRecord> getAnswers() {
         int anCount = getHeader().getAnCount();
 
         ParseResult<List<Question>> questions = getQuestions();
@@ -164,7 +157,7 @@ public class Decoder {
     public DnsMessage getDnsMessage() {
         Header header = getHeader();
         List<Question> questions = getQuestions().getResult();
-        List<ResourceRecord> answers = getAnswers2();
+        List<ResourceRecord> answers = getAnswers();
         List<ResourceRecord> nameServerResources = getNameServerResources2();
         List<ResourceRecord> additionalRecords = getAdditionalRecords2();
         return new DnsMessage(header, questions, answers, nameServerResources, additionalRecords);
