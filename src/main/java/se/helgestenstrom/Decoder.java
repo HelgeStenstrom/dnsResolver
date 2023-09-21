@@ -31,8 +31,7 @@ public class Decoder {
         return new Header(id, new Flags(flags), qdCount, anCount, nsCount, arCount);
     }
 
-    private ParseResult<List<Question>> getQuestions() {
-        int qdCount = getHeader().getQdCount();
+    private ParseResult<List<Question>> getQuestions(int qdCount) {
 
         int startingPoint = 12;
 
@@ -58,25 +57,12 @@ public class Decoder {
     }
 
 
-    private List<ResourceRecord> getAnswers() {
-        int anCount = getHeader().getAnCount();
+    private List<ResourceRecord> getAnswers(int anCount, int startIndex) {
 
-        ParseResult<List<Question>> questions = getQuestions();
-
-        return getResourceRecords(anCount, questions.getNextIndex())
+        return getRecordsResults(anCount, startIndex)
                 .stream()
                 .map(ParseResult::getResult)
                 .toList();
-    }
-
-    private ArrayList<ParseResult<ResourceRecord>> getResourceRecords(int anCount, int startIndex) {
-        ArrayList<ParseResult<ResourceRecord>> collector = new ArrayList<>();
-        for (int i = 0; i < anCount; i++) {
-            ParseResult<ResourceRecord> resourceRecordParseResult = getOneRecord(startIndex);
-            collector.add(resourceRecordParseResult);
-            startIndex = resourceRecordParseResult.getNextIndex();
-        }
-        return collector;
     }
 
     private ParseResult<ResourceRecord> getOneRecord(int nextIndex) {
@@ -92,36 +78,40 @@ public class Decoder {
         return new ParseResult<>(oneAnswer, rdIndex + rdLength);
     }
 
-    private List<ResourceRecord> getNameServerResources() {
-        ArrayList<ParseResult<ResourceRecord>> nsRecords = getNameServerResults();
+    private List<ResourceRecord> getNameServerResources(int qdCount, int anCount, int nsCount) {
+        int nextIndex = getQuestions(qdCount).getNextIndex();
+        ArrayList<ParseResult<ResourceRecord>> nsRecords = getRecordsResults(
+                nsCount,
+                getRecordsResults(anCount, nextIndex).stream()
+                        .reduce((first, second) -> second)
+                        .orElse(new ParseResult<>(null, nextIndex))
+                        .getNextIndex());
 
         return nsRecords.stream()
                 .map(ParseResult::getResult)
                 .toList();
     }
 
-    private ArrayList<ParseResult<ResourceRecord>> getNameServerResults() {
-        int anCount = getHeader().getAnCount();
-        int nsCount = getHeader().getNsCount();
+    private ArrayList<ParseResult<ResourceRecord>> getRecordsResults(int count, int startIndex) {
 
-        ParseResult<List<Question>> questions = getQuestions();
-        int startIndex = questions.getNextIndex();
-        ArrayList<ParseResult<ResourceRecord>> answers = getResourceRecords(anCount, startIndex);
-
-        int nsStartIndex = answers.stream()
-                .reduce((first, second) -> second)
-                .orElse(new ParseResult<>(null, startIndex))
-                .getNextIndex();
-
-        return getResourceRecords(nsCount, nsStartIndex);
+        ArrayList<ParseResult<ResourceRecord>> collector = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ParseResult<ResourceRecord> resourceRecordParseResult = getOneRecord(startIndex);
+            collector.add(resourceRecordParseResult);
+            startIndex = resourceRecordParseResult.getNextIndex();
+        }
+        return collector;
     }
 
     private List<ResourceRecord> getAdditionalRecords() {
-        int nextIndex = getNameServerResults().stream()
+        int nextIndex = getRecordsResults(getHeader().getNsCount(), getRecordsResults(getHeader().getAnCount(), getQuestions(getHeader().getQdCount()).getNextIndex()).stream()
+                .reduce((first, second) -> second)
+                .orElse(new ParseResult<>(null, getQuestions(getHeader().getQdCount()).getNextIndex()))
+                .getNextIndex()).stream()
                 .reduce((first, second) -> second)
                 .orElse(new ParseResult<>(null, 0))
                 .getNextIndex();
-        ArrayList<ParseResult<ResourceRecord>> resourceRecords = getResourceRecords(getHeader().getArCount(), nextIndex);
+        ArrayList<ParseResult<ResourceRecord>> resourceRecords = getRecordsResults(getHeader().getArCount(), nextIndex);
         return resourceRecords.stream()
                 .map(ParseResult::getResult)
                 .toList();
@@ -129,10 +119,14 @@ public class Decoder {
 
     public DnsMessage getDnsMessage() {
         Header header = getHeader();
-        List<Question> questions = getQuestions().getResult();
-        List<ResourceRecord> answers = getAnswers();
-        List<ResourceRecord> nameServerResources = getNameServerResources();
+        int qdCount = header.getQdCount();
+        int anCount = header.getAnCount();
+        int nsCount = header.getNsCount();
+        ParseResult<List<Question>> questions = getQuestions(qdCount);
+        int answersStartIndex = questions.getNextIndex();
+        List<ResourceRecord> answers = getAnswers(anCount, answersStartIndex);
+        List<ResourceRecord> nameServerResources = getNameServerResources(qdCount, anCount, nsCount);
         List<ResourceRecord> additionalRecords = getAdditionalRecords();
-        return new DnsMessage(header, questions, answers, nameServerResources, additionalRecords);
+        return new DnsMessage(header, questions.getResult(), answers, nameServerResources, additionalRecords);
     }
 }
