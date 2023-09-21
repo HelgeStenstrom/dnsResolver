@@ -92,7 +92,7 @@ public class Decoder {
         return new ParseResult<>(oneAnswer, rdIndex + rdLength);
     }
 
-    private List<ResourceRecord> getNameServerResources2() {
+    private List<ResourceRecord> getNameServerResources() {
         ArrayList<ParseResult<ResourceRecord>> nsRecords = getNameServerResults();
 
         return nsRecords.stream()
@@ -116,7 +116,7 @@ public class Decoder {
         return getResourceRecords(nsCount, nsStartIndex);
     }
 
-    private List<ResourceRecord> getAdditionalRecords2() {
+    private List<ResourceRecord> getAdditionalRecords() {
         int nextIndex = getNameServerResults().stream()
                 .reduce((first, second) -> second)
                 .orElse(new ParseResult<>(null, 0))
@@ -131,8 +131,8 @@ public class Decoder {
         Header header = getHeader();
         List<Question> questions = getQuestions().getResult();
         List<ResourceRecord> answers = getAnswers();
-        List<ResourceRecord> nameServerResources = getNameServerResources2();
-        List<ResourceRecord> additionalRecords = getAdditionalRecords2();
+        List<ResourceRecord> nameServerResources = getNameServerResources();
+        List<ResourceRecord> additionalRecords = getAdditionalRecords();
         return new DnsMessage(header, questions, answers, nameServerResources, additionalRecords);
     }
 }
