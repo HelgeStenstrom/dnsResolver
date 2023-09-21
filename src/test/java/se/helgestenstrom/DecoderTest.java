@@ -265,66 +265,10 @@ class DecoderTest {
     }
 
 
-    @Test
-    void instanceFromByteList() {
 
-        // Setup
-        String clearText = "abc.def";
-        ByteList byteList = encodedText(clearText);
-        Decoder decoder = new Decoder(byteList);
 
-        // Exercise
-        Name dn = decoder.nameFrom(0);
 
-        // Verify
-        assertEquals(clearText, dn.toString());
-    }
 
-    @Test
-    void instanceFromByteListStartingMidway() {
-
-        // Setup
-        String clearText = "abc.def";
-        ByteList containsTheName = encodedText(clearText);
-
-        ByteList ignoredPrefix = encodedText("to be ignored");
-        ByteList wholeList = ByteList.concatLists(ignoredPrefix, containsTheName);
-
-        int startingPoint = ignoredPrefix.size();
-        Decoder decoder = new Decoder(wholeList);
-
-        // Exercise
-        Name dn = decoder.nameFrom(startingPoint);
-
-        // Verify
-        assertEquals(clearText, dn.toString());
-    }
-
-    @Test
-    void twoNamesAndAPointer() {
-
-        // Setup
-        String name1 = "name1";
-        String name2 = "secondName";
-        ByteList encodedName1 = encodedText(name1);
-        ByteList encodedName2 = encodedText(name2);
-        // Define a pointer to name2. It starts at the index that is the size of name1.
-        var pointTo = encodedName1.size();
-        int startingPoint = encodedName1.size() + encodedName2.size();
-
-        ByteList pointerList = Decoder.pointerTo(pointTo);
-        ByteList wholeList = ByteList.concatLists(encodedName1, encodedName2, pointerList);
-        Decoder decoder = new Decoder(wholeList);
-
-        // Exercise
-        Name name = decoder.nameFrom(startingPoint);
-
-        // Verify
-        assertEquals(name2, name.toString());
-        // Since nothing follows the pointer, we know that only the
-        // length of the pointer (2 bytes) is consumed.
-
-    }
 
     private ByteList encodedText(String clearText) {
         Name name = new Name(clearText);

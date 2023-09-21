@@ -11,6 +11,38 @@ import java.util.stream.Collectors;
 public class NameDecoder {
 
 
+    /**
+     * @param encoded A message to be parsed
+     * @param startIndex The position in the message, where to start.
+     * @return a Name and a start position for continued parsing
+     */
+    public ParseResult<Name> nameAndNext(ByteList encoded, int startIndex) {
+        Optional<Integer> maybePointer = encoded.pointerValue(startIndex);
+        if (maybePointer.isPresent()) {
+            Name name = nameFrom(encoded, maybePointer.get());
+            int consumed = 2;
+            return new ParseResult<>(name, startIndex + consumed);
+        } else {
+            Name name = nameFrom(encoded, startIndex);
+            int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
+            return new ParseResult<>(name, startIndex + sum + 1);
+        }
+    }
+
+    /**
+     * @param byteList Sequence to be decoded into a {@link Name}
+     * @param offset   Point in the sequence from which to start the decoding
+     * @return an instance of {@link Name}
+     */
+    private Name nameFrom(ByteList byteList, int offset) {
+        var isPointer = byteList.pointerValue(offset);
+        if (isPointer.isPresent()) {
+            return nameFrom(byteList, isPointer.get());
+        }
+        var partial = byteList.subList(offset, byteList.size());
+        return nameFrom(partial);
+    }
+
     private Name nameFrom(ByteList bytes) {
         var pointer = 0;
 
@@ -32,32 +64,5 @@ public class NameDecoder {
         String collect = String.join(".", collector);
 
         return new Name(collect);
-    }
-
-    /**
-     * @param byteList Sequence to be decoded into a {@link Name}
-     * @param offset   Point in the sequence from which to start the decoding
-     * @return an instance of {@link Name}
-     */
-    public Name nameFrom(ByteList byteList, int offset) {
-        var isPointer = byteList.pointerValue(offset);
-        if (isPointer.isPresent()) {
-            return nameFrom(byteList, isPointer.get());
-        }
-        var partial = byteList.subList(offset, byteList.size());
-        return nameFrom(partial);
-    }
-
-    ParseResult<Name> nameAndNext(ByteList encoded, int nextIndex) {
-        Optional<Integer> maybePointer = encoded.pointerValue(nextIndex);
-        if (maybePointer.isPresent()) {
-            Name name = nameFrom(encoded, maybePointer.get());
-            int consumed = 2;
-            return new ParseResult<>(name, nextIndex + consumed);
-        } else {
-            Name name = nameFrom(encoded, nextIndex);
-            int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
-            return new ParseResult<>(name, nextIndex + sum + 1);
-        }
     }
 }

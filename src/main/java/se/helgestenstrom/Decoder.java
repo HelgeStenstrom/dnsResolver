@@ -75,15 +75,26 @@ public class Decoder {
         return new ParseResult<>(collector, nextIndex);
     }
 
-    /**
-     * @param startingPoint offset from start of whole message
-     * @return an instance of {@link Name}
-     */
-    public Name nameFrom(int startingPoint) {
-        return nameDecoder.nameFrom(encoded, startingPoint);
-    }
 
     public List<ResourceRecord> getAnswers() {
+        // TODO: Make this method a wrapper over getDnsMessage.getAnswers()
+
+        // TODO: Find why getDnsMessage has some side effect.
+
+        //getNameServerResults();
+
+
+        int anCount = getHeader().getAnCount();
+
+        ParseResult<List<Question>> questions = getQuestions();
+
+        return getResourceRecords(anCount, questions.getNextIndex())
+                .stream()
+                .map(ParseResult::getResult)
+                .toList();
+    }
+
+    private List<ResourceRecord> getAnswers2() {
         int anCount = getHeader().getAnCount();
 
         ParseResult<List<Question>> questions = getQuestions();
@@ -118,6 +129,9 @@ public class Decoder {
     }
 
     public List<ResourceRecord> getNameServerResources() {
+        return getDnsMessage().getNameServerResources();
+    }
+    private List<ResourceRecord> getNameServerResources2() {
         ArrayList<ParseResult<ResourceRecord>> nsRecords = getNameServerResults();
 
         return nsRecords.stream()
@@ -142,6 +156,11 @@ public class Decoder {
 
 
     public List<ResourceRecord> getAdditionalRecords() {
+        return getDnsMessage().getAdditionalRecords();
+    }
+
+
+    private List<ResourceRecord> getAdditionalRecords2() {
         int nextIndex = getNameServerResults().stream()
                 .reduce((first, second) -> second)
                 .orElseThrow()
@@ -153,6 +172,11 @@ public class Decoder {
     }
 
     public DnsMessage getDnsMessage() {
-        return new DnsMessage(getHeader(), getQuestions().getResult(), getAnswers(), getNameServerResources(), getAdditionalRecords());
+        Header header = getHeader();
+        List<Question> questions = getQuestions().getResult();
+        List<ResourceRecord> answers = getAnswers2();
+        List<ResourceRecord> nameServerResources = getNameServerResources2();
+        List<ResourceRecord> additionalRecords = getAdditionalRecords2();
+        return new DnsMessage(header, questions, answers, nameServerResources, additionalRecords);
     }
 }
