@@ -15,6 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DecoderTest {
 
+    /**
+     * Creates a 2-byte pointer, to be used in names
+     *
+     * @param value offset to point to
+     * @return a 2-byte list.
+     */
+    public static ByteList pointerTo(int value) {
+        int msb = (value & 0xff00) >> 8;
+        int lsb = value & 0xff;
+        int pointerMarker = 0xc0;
+
+        return new ByteList(List.of(msb | pointerMarker, lsb));
+    }
+
     @Test
     @DisplayName("ID from message")
     void idFromEncodedMessage() {
@@ -25,7 +39,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(encodedWithId);
 
         // Exercise
-        int id = decoder.getId();
+        int id = decoder.getDnsMessage().getHeader().getId().id();
 
         // Verify
         assertEquals(0x1234, id);
@@ -41,7 +55,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(encodedWithId);
 
         // Exercise
-        Header header = decoder.getHeader();
+        Header header = decoder.getDnsMessage().getHeader();
 
         // Verify
         assertEquals(0x12ab, header.getId().id());
@@ -60,7 +74,7 @@ class DecoderTest {
         Decoder decoder = new Decoder(encodedWithFlags);
 
         // Exercise
-        Header header = decoder.getHeader();
+        Header header = decoder.getDnsMessage().getHeader();
 
         // Verify
         assertEquals(isResponse, header.getFlags().isResponse());
@@ -217,7 +231,7 @@ class DecoderTest {
                 0);
         ByteList question1 = questionWithNameFromBytes(q1Name, 12, 34);
         int firstNameLocation = header.size();
-        ByteList firstNamePointer = Decoder.pointerTo(firstNameLocation);
+        ByteList firstNamePointer = pointerTo(firstNameLocation);
         ByteList question2 = firstNamePointer.append(new ByteList(List.of(0x10, 0x23, 0x45, 0x67)));
 
         ByteList message = header.append(question1, question2);
@@ -270,7 +284,7 @@ class DecoderTest {
     void pointerArithmetic() {
 
         // Exercise
-        ByteList pair = Decoder.pointerTo(0x0105);
+        ByteList pair = pointerTo(0x0105);
 
         // Verify
         assertEquals(2, pair.size());

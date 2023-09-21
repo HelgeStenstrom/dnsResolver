@@ -21,26 +21,8 @@ public class Decoder {
         nameDecoder = new NameDecoder();
     }
 
-    /**
-     * Creates a 2-byte pointer, to be used in names
-     *
-     * @param value offset to point to
-     * @return a 2-byte list.
-     */
-    public static ByteList pointerTo(int value) {
-        int msb = (value & 0xff00) >> 8;
-        int lsb = value & 0xff;
-        int pointerMarker = 0xc0;
-
-        return new ByteList(List.of(msb | pointerMarker, lsb));
-    }
-
-    public int getId() {
-        return encoded.u16(0);
-    }
-
     public Header getHeader() {
-        Id id = new Id(getId());
+        Id id = new Id(encoded.u16(0));
         int flags = encoded.u16(2);
         int qdCount = encoded.u16(4);
         int anCount = encoded.u16(6);
