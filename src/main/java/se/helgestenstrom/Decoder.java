@@ -57,9 +57,9 @@ public class Decoder {
     }
 
 
-    private List<ResourceRecord> getAnswers(int anCount, int startIndex) {
+    private List<ResourceRecord> getResults(ArrayList<ParseResult<ResourceRecord>> recordsResults) {
 
-        return getRecordsResults(anCount, startIndex)
+        return recordsResults
                 .stream()
                 .map(ParseResult::getResult)
                 .toList();
@@ -78,18 +78,12 @@ public class Decoder {
         return new ParseResult<>(oneAnswer, rdIndex + rdLength);
     }
 
-    private List<ResourceRecord> getNameServerResources(int qdCount, int anCount, int nsCount) {
-        int nextIndex = getQuestions(qdCount).getNextIndex();
-        ArrayList<ParseResult<ResourceRecord>> nsRecords = getRecordsResults(
-                nsCount,
-                getRecordsResults(anCount, nextIndex).stream()
-                        .reduce((first, second) -> second)
-                        .orElse(new ParseResult<>(null, nextIndex))
-                        .getNextIndex());
+    private List<ResourceRecord> getResources(int count, int startIndex) {
+        ArrayList<ParseResult<ResourceRecord>> records = getRecordsResults(
+                count,
+                startIndex);
 
-        return nsRecords.stream()
-                .map(ParseResult::getResult)
-                .toList();
+        return getResults(records);
     }
 
     private ArrayList<ParseResult<ResourceRecord>> getRecordsResults(int count, int startIndex) {
@@ -103,30 +97,37 @@ public class Decoder {
         return collector;
     }
 
-    private List<ResourceRecord> getAdditionalRecords() {
-        int nextIndex = getRecordsResults(getHeader().getNsCount(), getRecordsResults(getHeader().getAnCount(), getQuestions(getHeader().getQdCount()).getNextIndex()).stream()
+    private List<ResourceRecord> getAdditionalRecords(int qdCount, int anCount, int nsCount, int arCount) {
+        int nextIndex1 = getQuestions(qdCount).getNextIndex();
+        int nextIndex = getRecordsResults(nsCount, getRecordsResults(anCount, nextIndex1).stream()
                 .reduce((first, second) -> second)
-                .orElse(new ParseResult<>(null, getQuestions(getHeader().getQdCount()).getNextIndex()))
+                .orElse(new ParseResult<>(null, nextIndex1))
                 .getNextIndex()).stream()
                 .reduce((first, second) -> second)
                 .orElse(new ParseResult<>(null, 0))
                 .getNextIndex();
-        ArrayList<ParseResult<ResourceRecord>> resourceRecords = getRecordsResults(getHeader().getArCount(), nextIndex);
-        return resourceRecords.stream()
-                .map(ParseResult::getResult)
-                .toList();
+        return getResources(arCount, nextIndex);
     }
 
     public DnsMessage getDnsMessage() {
+
         Header header = getHeader();
         int qdCount = header.getQdCount();
         int anCount = header.getAnCount();
         int nsCount = header.getNsCount();
+        int arCount = getHeader().getArCount();
+
         ParseResult<List<Question>> questions = getQuestions(qdCount);
         int answersStartIndex = questions.getNextIndex();
-        List<ResourceRecord> answers = getAnswers(anCount, answersStartIndex);
-        List<ResourceRecord> nameServerResources = getNameServerResources(qdCount, anCount, nsCount);
-        List<ResourceRecord> additionalRecords = getAdditionalRecords();
+
+        ArrayList<ParseResult<ResourceRecord>> answersResults = getRecordsResults(anCount, answersStartIndex);
+        List<ResourceRecord> answers = getResults(answersResults);
+        int nsStartIndex = answersResults.stream()
+                .reduce((first, second) -> second)
+                .orElse(new ParseResult<>(null, answersStartIndex))
+                .getNextIndex();
+        List<ResourceRecord> nameServerResources = getResources(nsCount, nsStartIndex);
+        List<ResourceRecord> additionalRecords = getAdditionalRecords(qdCount, anCount, nsCount, arCount);
         return new DnsMessage(header, questions.getResult(), answers, nameServerResources, additionalRecords);
     }
 }
