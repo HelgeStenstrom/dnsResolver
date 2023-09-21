@@ -97,16 +97,8 @@ public class Decoder {
         return collector;
     }
 
-    private List<ResourceRecord> getAdditionalRecords(int qdCount, int anCount, int nsCount, int arCount) {
-        int nextIndex1 = getQuestions(qdCount).getNextIndex();
-        int nextIndex = getRecordsResults(nsCount, getRecordsResults(anCount, nextIndex1).stream()
-                .reduce((first, second) -> second)
-                .orElse(new ParseResult<>(null, nextIndex1))
-                .getNextIndex()).stream()
-                .reduce((first, second) -> second)
-                .orElse(new ParseResult<>(null, 0))
-                .getNextIndex();
-        return getResources(arCount, nextIndex);
+    private List<ResourceRecord> getAdditionalRecords(int arCount, int additionalStartIndex) {
+        return getResources(arCount, additionalStartIndex);
     }
 
     public DnsMessage getDnsMessage() {
@@ -122,12 +114,18 @@ public class Decoder {
 
         ArrayList<ParseResult<ResourceRecord>> answersResults = getRecordsResults(anCount, answersStartIndex);
         List<ResourceRecord> answers = getResults(answersResults);
-        int nsStartIndex = answersResults.stream()
-                .reduce((first, second) -> second)
-                .orElse(new ParseResult<>(null, answersStartIndex))
-                .getNextIndex();
-        List<ResourceRecord> nameServerResources = getResources(nsCount, nsStartIndex);
-        List<ResourceRecord> additionalRecords = getAdditionalRecords(qdCount, anCount, nsCount, arCount);
+        int nsStartIndex = nextStartIndex(answersResults, answersStartIndex);
+        List<ResourceRecord> nameServerResources = getAdditionalRecords(nsCount, nsStartIndex);
+        ArrayList<ParseResult<ResourceRecord>> nsResults = getRecordsResults(nsCount, nsStartIndex);
+        int additionalStartIndex = nextStartIndex(nsResults, nsStartIndex);
+        List<ResourceRecord> additionalRecords = getAdditionalRecords(arCount, additionalStartIndex);
         return new DnsMessage(header, questions.getResult(), answers, nameServerResources, additionalRecords);
+    }
+
+    private int nextStartIndex(ArrayList<ParseResult<ResourceRecord>> nsResults, int defaultIndex) {
+        return nsResults.stream()
+                .reduce((first, second) -> second)
+                .orElse(new ParseResult<>(null, defaultIndex))
+                .getNextIndex();
     }
 }
