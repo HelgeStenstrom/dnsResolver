@@ -68,11 +68,12 @@ public class Decoder {
     private ParseResult<ResourceRecord> getOneRecord(int nextIndex) {
         ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
         Name name =  nameParseResult.getResult();
-        int type = encoded.u16(nameParseResult.getNextIndex());
-        int rDataClass = encoded.u16(nameParseResult.getNextIndex() + 2);
-        int timeToLive = encoded.u16(nameParseResult.getNextIndex() + 4);
-        int rdLength = encoded.u16(nameParseResult.getNextIndex() + 6);
-        int rdIndex = nameParseResult.getNextIndex() + 8;
+        int nextIndex1 = nameParseResult.getNextIndex();
+        int type = encoded.u16(nextIndex1);
+        int rDataClass = encoded.u16(nextIndex1 + 2);
+        long timeToLive = encoded.u32(nextIndex1 + 4);
+        int rdLength = encoded.u16(nextIndex1 + 8);
+        int rdIndex = nextIndex1 + 10;
         ByteList rData = encoded.subList(rdIndex, rdIndex + rdLength);
         ResourceRecord oneAnswer = new ResourceRecord(name, type, rDataClass, timeToLive, rData);
         return new ParseResult<>(oneAnswer, rdIndex + rdLength);

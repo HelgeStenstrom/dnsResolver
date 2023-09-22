@@ -164,8 +164,8 @@ class DecoderTest {
 
     private static ByteList questionWithNameFromBytes(List<Integer> bytes, int qType, int qClass) {
         ByteList encodedName = new ByteList(bytes);
-        ByteList qTypeBl = ByteList.fromInt(qType);
-        ByteList qClassBl = ByteList.fromInt(qClass);
+        ByteList qTypeBl = ByteList.u16FromInt(qType);
+        ByteList qClassBl = ByteList.u16FromInt(qClass);
         return encodedName.append(qTypeBl, qClassBl);
     }
 
@@ -250,12 +250,12 @@ class DecoderTest {
     }
 
     private static ByteList encodeHeader(int id, int flags, int qdCount, int anCount, int nsCount, int arCount) {
-        List<Integer> idPart = ByteList.fromInt(id);
-        ByteList flagsPart = ByteList.fromInt(flags);
-        ByteList qdCount1 = ByteList.fromInt(qdCount);
-        ByteList anCount1 = ByteList.fromInt(anCount);
-        ByteList nsCount1 = ByteList.fromInt(nsCount);
-        ByteList arCount1 = ByteList.fromInt(arCount);
+        List<Integer> idPart = ByteList.u16FromInt(id);
+        ByteList flagsPart = ByteList.u16FromInt(flags);
+        ByteList qdCount1 = ByteList.u16FromInt(qdCount);
+        ByteList anCount1 = ByteList.u16FromInt(anCount);
+        ByteList nsCount1 = ByteList.u16FromInt(nsCount);
+        ByteList arCount1 = ByteList.u16FromInt(arCount);
 
 
         ByteList encodedWithId = new ByteList();
@@ -597,11 +597,29 @@ class DecoderTest {
     private ByteList encodeAnswer(String domainName, int recordType, int dataClass, int timeToLive, List<Integer> data) {
         ByteList encodedName = encodedText(domainName);
         return encodedName
-        .append(ByteList.fromInt(recordType))
-        .append(ByteList.fromInt(dataClass))
-        .append(ByteList.fromInt(timeToLive))
-        .append(ByteList.fromInt(data.size()))
+        .append(ByteList.u16FromInt(recordType))
+        .append(ByteList.u16FromInt(dataClass))
+        .append(ByteList.u32FromInt(timeToLive))
+        .append(ByteList.u16FromInt(data.size()))
         .append(new ByteList(data))
         .append(new ByteList());
+    }
+
+    @Test
+    void roundTrip() {
+
+        // Setup
+
+        final Id id = new Id(0x1234);
+        final Flags flags = new Flags(true);
+        final Question question = new Question(new Name("dns.google.com"), 1, 1);
+        var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question), List.of(), List.of(), List.of());
+        ByteList byteList = dnsMessage.byteList();
+        Decoder decoder = new Decoder(byteList);
+        DnsMessage dnsMessage1 = decoder.getDnsMessage();
+        ByteList byteList1 = dnsMessage1.byteList();
+        assertEquals(byteList, byteList1);
+
+
     }
 }

@@ -1,14 +1,14 @@
 package se.helgestenstrom;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClientTest {
 
@@ -34,5 +34,13 @@ class ClientTest {
 
         // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
         assertEquals("abcd", returned.substring(0, 4));
+
+        ByteList byteList = ByteList.of(returned);
+        Decoder decoder = new Decoder(byteList);
+        DnsMessage dnsMessage = decoder.getDnsMessage();
+        Header header = dnsMessage.getHeader();
+        int id = header.getId().id();
+
+        assertEquals(0xabcd, id);
     }
 }

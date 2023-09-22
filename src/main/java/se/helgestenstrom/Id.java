@@ -20,7 +20,7 @@ public class Id  {
      * @return the ID as a list of two bytes
      */
     public ByteList asList() {
-        return ByteList.fromInt(number);
+        return ByteList.u16FromInt(number);
     }
 
     /**

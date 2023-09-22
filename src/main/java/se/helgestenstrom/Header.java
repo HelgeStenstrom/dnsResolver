@@ -48,10 +48,10 @@ public class Header {
      * @return the header as a list
      */
     public ByteList asList() {
-        ByteList counts = ByteList.fromInt(qdCount)
-                .append(ByteList.fromInt(anCount))
-                .append(ByteList.fromInt(nsCount))
-                .append(ByteList.fromInt(arCount));
+        ByteList counts = ByteList.u16FromInt(qdCount)
+                .append(ByteList.u16FromInt(anCount))
+                .append(ByteList.u16FromInt(nsCount))
+                .append(ByteList.u16FromInt(arCount));
         return id.asList()
                 .append(flags.asList())
                 .append(counts);

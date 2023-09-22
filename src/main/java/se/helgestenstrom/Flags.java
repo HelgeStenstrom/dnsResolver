@@ -37,7 +37,7 @@ public class Flags {
      * @return the flag as a list of 2 bytes
      */
     public ByteList asList() {
-        return ByteList.fromInt(bitField);
+        return ByteList.u16FromInt(bitField);
     }
 
     private int makeBitField(boolean isResponse, boolean isAuthoritative, boolean recursionDesired) {

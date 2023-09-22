@@ -92,19 +92,38 @@ class ByteListTest {
     void shortListFromInt() {
         int value = 0x1234;
 
-        ByteList bl = ByteList.fromInt(value);
+        ByteList bl = ByteList.u16FromInt(value);
 
         ByteList expected = new ByteList(List.of(0x12, 0x34));
         assertEquals(expected, bl);
     }
 
     @Test
+    void u32fromLong() {
+        long value = 0x12345678;
+        ByteList bl = ByteList.u32FromInt(value);
+
+        ByteList expected = new ByteList(List.of(0x12, 0x34, 0x56, 0x78));
+        assertEquals(expected, bl);
+    }
+
+
+    @Test
     void acceptOnly16bitInts() {
 
-        var computable = ByteList.fromInt(0xffff);
+        var computable = ByteList.u16FromInt(0xffff);
         assertEquals(2, computable.size());
-        assertThrows(IllegalArgumentException.class, () -> ByteList.fromInt(-1), "negative not considered.");
-        assertThrows(IllegalArgumentException.class, () -> ByteList.fromInt(0x1ffff), "too large number");
+        assertThrows(IllegalArgumentException.class, () -> ByteList.u16FromInt(-1), "negative not considered.");
+        assertThrows(IllegalArgumentException.class, () -> ByteList.u16FromInt(0x1ffff), "too large number");
+    }
+
+    @Test
+    void acceptOnly32bitLongs() {
+
+        var computable = ByteList.u32FromInt(0xffffffffL);
+        assertEquals(4, computable.size());
+        assertThrows(IllegalArgumentException.class, () -> ByteList.u32FromInt(-1), "negative not considered.");
+        assertThrows(IllegalArgumentException.class, () -> ByteList.u32FromInt(0x1ffffffffL), "too large number");
     }
 
     @Test

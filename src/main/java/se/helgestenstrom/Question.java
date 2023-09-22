@@ -33,8 +33,8 @@ public class Question {
     public ByteList asList() {
         ByteList domainAsList = name.asList();
         return domainAsList
-                .append(ByteList.fromInt(typeInt))
-                .append(ByteList.fromInt(classInt));
+                .append(ByteList.u16FromInt(typeInt))
+                .append(ByteList.u16FromInt(classInt));
     }
 
     public List<String> getLabels() {

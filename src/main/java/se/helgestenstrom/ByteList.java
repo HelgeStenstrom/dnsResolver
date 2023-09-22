@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Holds lists of bytes, can be created from a hex string
  */
-public class ByteList extends ArrayList<Integer>  {
+public class ByteList extends ArrayList<Integer> {
 
 
     /**
@@ -51,11 +51,12 @@ public class ByteList extends ArrayList<Integer>  {
     }
 
     /**
-     * Creates a 2-cell list from a 16-bit number. Excessive bits are ignore.
+     * Creates a 2-cell list from a 16-bit number. Excessive bits are ignored.
+     *
      * @param value to be converted to 2-byte list
      * @return the list
      */
-    public static ByteList fromInt(int value) {
+    public static ByteList u16FromInt(int value) {
         if (value < 0 || value > 0xffff) {
             throw new IllegalArgumentException("%d is outside permitted range 0 to 0xffff.".formatted(value));
         }
@@ -64,17 +65,28 @@ public class ByteList extends ArrayList<Integer>  {
         return new ByteList(List.of(msb, lsb));
     }
 
-    static ByteList concatLists(ByteList... lists) {
-        ByteList wholeList = new ByteList();
-        for (var list : lists) {
-            wholeList.addAll(list);
+    /**
+     * Creates a 4-cell list from a 32-bit number. Excessive bits are ignored.
+     *
+     * @param value to be converted to 2-byte list
+     * @return the list
+     */
+    public static ByteList u32FromInt(long value) {
+        if (value < 0 || value > 0xffffffffL) {
+            throw new IllegalArgumentException("%d is outside permitted range 0 to 0xffffffff.".formatted(value));
         }
-        return wholeList;
+
+        int b3 = (int) ((value & 0xff000000L) >> 24);
+        int b2 = (int) ((value & 0xff0000) >> 16);
+        int b1 = (int) ((value & 0xff00) >> 8);
+        int b0 = (int) (value & 0xff);
+        return new ByteList(List.of(b3, b2, b1, b0));
     }
 
-     ByteList append(ByteList... lists) {
-         ByteList result = new ByteList(this);
-         for (var list : lists) {
+
+    ByteList append(ByteList... lists) {
+        ByteList result = new ByteList(this);
+        for (var list : lists) {
             result.addAll(list);
         }
         return result;
@@ -96,7 +108,7 @@ public class ByteList extends ArrayList<Integer>  {
 
     @Override
     public ByteList subList(int fromIndex, int toIndex) {
-        List<Integer> subList =  super.subList(fromIndex, toIndex);
+        List<Integer> subList = super.subList(fromIndex, toIndex);
         ByteList result = new ByteList();
 
         result.addAll(subList);
@@ -106,11 +118,27 @@ public class ByteList extends ArrayList<Integer>  {
 
     /**
      * Treat the first two ints of the list as MSB and LSB. Concatenate to a 16-bit word.
-     * @return an unsigned integer U16
+     *
      * @param index index of the most significant byte of the returned value.
+     * @return an unsigned integer U16
      */
     public int u16(int index) {
         return (this.get(index) << 8) | this.get(index + 1);
+    }
+
+
+    /**
+     * Treat the first four ints of the list as bytes of a 32-bit word. Concatenate to a 32-bit word.
+     *
+     * @param index index of the most significant byte of the returned value.
+     * @return an unsigned integer U32, as long
+     */
+    public long u32(int index) {
+
+        return (this.get(index) << 24)
+                | (this.get(index + 1) << 16)
+                | (this.get(index + 2) << 8)
+                | this.get(index + 3);
     }
 
     /**
@@ -123,7 +151,7 @@ public class ByteList extends ArrayList<Integer>  {
             return Optional.empty();
         }
 
-        Integer value = ((this.get(offset) & 0x3f)<<8) | (this.get(offset+1) & 0xff);
+        Integer value = ((this.get(offset) & 0x3f) << 8) | (this.get(offset + 1) & 0xff);
         return Optional.of(value);
     }
 
