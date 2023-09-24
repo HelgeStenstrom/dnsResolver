@@ -47,6 +47,9 @@ public class Name {
      * @return a list of the words between the dots in the name.
      */
     public List<String> labels() {
+        if (value.isEmpty()) {
+            return List.of();
+        }
         return Arrays.stream(value.split("\\.")).toList();
     }
 

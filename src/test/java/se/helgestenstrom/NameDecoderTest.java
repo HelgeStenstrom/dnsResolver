@@ -9,6 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NameDecoderTest {
 
     @Test
+    void emptyName() {
+        NameDecoder nameDecoder = new NameDecoder();
+
+        List<Integer> bytes = List.of(0, 9, 9, 9);
+
+        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(new ByteList(bytes), 0);
+        String name = nameParseResult.getResult().toString();
+        assertEquals("", name);
+        assertEquals(1, nameParseResult.getNextIndex());
+    }
+    @Test
     void simpleName() {
         NameDecoder nameDecoder = new NameDecoder();
 
@@ -17,6 +28,7 @@ class NameDecoderTest {
         ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(new ByteList(bytes), 0);
         String name = nameParseResult.getResult().toString();
         assertEquals("a", name);
+        assertEquals(3, nameParseResult.getNextIndex());
     }
 
     @Test

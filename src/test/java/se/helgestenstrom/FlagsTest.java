@@ -80,4 +80,41 @@ class FlagsTest {
 //        assertFalse(new Flags(queryNotResponse).isResponse());
     }
 
+    @Test
+    void opcode() {
+        assertEquals(0xf, new Flags(0xffff).getOpcode());
+        assertEquals(0, new Flags(0).getOpcode());
+        assertEquals(5, new Flags( 5 << 11).getOpcode());
+        assertEquals(5, new Flags( 0b0010100000000000).getOpcode());
+    }
+
+    @Test
+    void authoritative() {
+        assertFalse(new Flags(0).isAuthoritative());
+        assertTrue(new Flags(1 << 10).isAuthoritative());
+    }
+
+    @Test
+    void truncation() {
+        assertFalse(new Flags(0).isTruncated());
+        assertTrue(new Flags(1 << 9).isTruncated());
+    }
+
+    @Test
+    void isRecursionDesired() {
+        assertFalse(new Flags(0).isRecursionDesired());
+        assertTrue(new Flags(1 << 8).isRecursionDesired());
+    }
+
+    @Test
+    void isRecursionAvailable() {
+        assertFalse(new Flags(0).isRecursionAvailable());
+        assertTrue(new Flags(1 << 7).isRecursionAvailable());
+    }
+
+    @Test
+    void rCode() {
+        assertEquals(RCode.Refused, new Flags(5).getRCode());
+    }
+
 }

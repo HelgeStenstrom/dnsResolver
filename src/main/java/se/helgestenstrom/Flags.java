@@ -54,6 +54,30 @@ public class Flags {
         return (bitField & 0x8000) !=0;
     }
 
+    public int getOpcode() {
+        return ((bitField >> 11) & 0xf);
+    }
+
+    public boolean isAuthoritative() {
+        return (bitField >> 10 & 1) !=0;
+    }
+
+    public boolean isTruncated() {
+        return (bitField >> 9 & 1) !=0;
+    }
+
+    public boolean isRecursionDesired() {
+        return  (bitField >> 8 & 1) !=0;
+    }
+
+    public boolean isRecursionAvailable() {
+        return (bitField >> 7 & 1) !=0;
+    }
+
+    public RCode getRCode() {
+        return RCode.values()[bitField & 7];
+    }
+
     static class Builder {
         private boolean recursionDesired = true;
         private boolean isResponse = false;

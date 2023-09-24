@@ -12,7 +12,7 @@ public class NameDecoder {
 
 
     /**
-     * @param encoded A message to be parsed
+     * @param encoded    A message to be parsed
      * @param startIndex The position in the message, where to start.
      * @return a Name and a start position for continued parsing
      */
@@ -24,8 +24,11 @@ public class NameDecoder {
             return new ParseResult<>(name, startIndex + consumed);
         } else {
             Name name = nameFrom(encoded, startIndex);
-            int sum = name.labels().stream().mapToInt(l -> l.length() + 1).sum();
-            return new ParseResult<>(name, startIndex + sum + 1);
+            int consumedByLabels = name.labels().stream().mapToInt(String::length).sum();
+            int consumedLengthPrefix = name.labels().size() ;
+            int consumedByEndingZero = 1;
+            int consumed = consumedByLabels + consumedLengthPrefix + consumedByEndingZero;
+            return new ParseResult<>(name, startIndex + consumed);
         }
     }
 
