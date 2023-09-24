@@ -3,17 +3,24 @@ package se.helgestenstrom;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ClientTest {
 
 
     private Client client;
+
 
     @BeforeEach
     void setup() throws SocketException, UnknownHostException {
@@ -27,10 +34,9 @@ class ClientTest {
     }
 
     @Test
-    void sendAndReceive() throws IOException {
+    void sendAndReceiveWithRecursion() throws IOException {
 
-
-        String returned = client.sendSomething(0xabcd);
+        String returned = client.sendSomething(0xabcd, true, "dns.google.com");
 
         // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
         assertEquals("abcd", returned.substring(0, 4));
@@ -42,5 +48,55 @@ class ClientTest {
         int id = header.getId().id();
 
         assertEquals(0xabcd, id);
+        List<ResourceRecord> answers = dnsMessage.getAnswers();
+
+        List<String> answerNames = answers.stream().map(ResourceRecord::getNameString).toList();
+        assertEquals(List.of("dns.google.com", "dns.google.com"), answerNames);
+
+        List<ByteList> datas = answers.stream().map(ResourceRecord::getRData).toList();
+        List<List<Integer>> expected = List.of(List.of(8, 8, 4, 4), List.of(8, 8, 8, 8));
+        assertEquals(expected.size(), datas.size());
+        assertTrue(expected.containsAll(datas));
+        //noinspection SuspiciousMethodCalls
+        assertTrue(datas.containsAll(expected));
+
+    }
+
+    public static Stream<Arguments> parameters() {
+        return Stream.of(
+                Arguments.of(true, "dns.google.com")
+                , Arguments.of(false, "dns.google.com")
+                , Arguments.of(true, "dns.google.com")
+                , Arguments.of(false, "dns.google.com")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("parameters")
+    void sendAndReceiveWithoutRecursion(boolean recursionDesired, String host) throws IOException {
+
+        String returned = client.sendSomething(0xabcd, recursionDesired, host);
+
+        // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
+        assertEquals("abcd", returned.substring(0, 4));
+
+        ByteList byteList = ByteList.of(returned);
+        Decoder decoder = new Decoder(byteList);
+        DnsMessage dnsMessage = decoder.getDnsMessage();
+        Header header = dnsMessage.getHeader();
+        int id = header.getId().id();
+
+        assertEquals(0xabcd, id);
+        List<ResourceRecord> answers = dnsMessage.getAnswers();
+
+        List<String> answerNames = answers.stream().map(ResourceRecord::getNameString).toList();
+        assertEquals(List.of("dns.google.com", "dns.google.com"), answerNames);
+
+        List<ByteList> datas = answers.stream().map(ResourceRecord::getRData).toList();
+        List<List<Integer>> expected = List.of(List.of(8, 8, 4, 4), List.of(8, 8, 8, 8));
+        assertEquals(expected.size(), datas.size());
+        assertTrue(expected.containsAll(datas));
+        //noinspection SuspiciousMethodCalls
+        assertTrue(datas.containsAll(expected));
     }
 }
