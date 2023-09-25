@@ -11,6 +11,18 @@ public class Flags {
 
     private final int bitField;
 
+    @Override
+    public String toString() {
+        return "QR: %s, Opcode: %d, AA: %s, TC: %s, RD: %s, RA: %s, RCODE: %s".formatted(
+                isResponse() ? "Response" : "Query",
+                getOpcode(),
+                isAuthoritative(),
+                isTruncated(),
+                isRecursionDesired(),
+                isRecursionAvailable(),
+                getRCode());
+    }
+
     /**
      * Constructor that supports only a single flag of all available.
      *
