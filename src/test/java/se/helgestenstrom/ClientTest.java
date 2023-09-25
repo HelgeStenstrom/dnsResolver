@@ -73,9 +73,9 @@ class ClientTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    void sendAndReceiveWithoutRecursion(boolean recursionDesired, String host) throws IOException {
+    void sendAndReceive(boolean recursionDesired, String hostToLookup) throws IOException {
 
-        String returned = client.sendSomething(0xdead, recursionDesired, host);
+        String returned = client.sendSomething(0xdead, recursionDesired, hostToLookup);
 
         // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
         assertEquals("dead", returned.substring(0, 4));

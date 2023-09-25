@@ -30,15 +30,15 @@ public class Client {
     /**
      * @param numericalId      the ID that should go out with the DNS message, and is expected to come back.
      * @param recursionDesired flag of the Header; true if recursion is desired.
-     * @param host             who to look up.
+     * @param hostToLookup             who to look up.
      * @return the response from a DNS server
      * @throws IOException if there are problems
      */
-    public String sendSomething(int numericalId, boolean recursionDesired, String host) throws IOException {
+    public String sendSomething(int numericalId, boolean recursionDesired, String hostToLookup) throws IOException {
 
         final Id id = new Id(numericalId);
         final Flags flags = new Flags(recursionDesired);
-        final Question question = new Question(new Name(host), 1, 1);
+        final Question question = new Question(new Name(hostToLookup), 1, 1);
         var dnsMessage = new DnsMessage(new Header(id, flags, 1, 0, 0, 0), List.of(question), List.of(), List.of(), List.of());
 
         byte[] buf = dnsMessage.bytes();
