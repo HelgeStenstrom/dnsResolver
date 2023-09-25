@@ -25,7 +25,7 @@ public class NameDecoder {
         } else {
             Name name = nameFrom(encoded, startIndex);
             int consumedByLabels = name.labels().stream().mapToInt(String::length).sum();
-            int consumedLengthPrefix = name.labels().size() ;
+            int consumedLengthPrefix = name.labels().size();
             int consumedByEndingZero = 1;
             int consumed = consumedByLabels + consumedLengthPrefix + consumedByEndingZero;
             return new ParseResult<>(name, startIndex + consumed);

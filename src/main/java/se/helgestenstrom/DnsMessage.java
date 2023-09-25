@@ -14,10 +14,11 @@ public class DnsMessage {
     private final List<ResourceRecord> nameServerResources;
 
     private final List<Question> questions;
+
     /**
-     * @param header The Header of RFC 1035, section 4.1
-     * @param questions zero or more Questions of RFC 1035, section 4.1
-     * @param answers List of answers according to RFC 1035, section 4.1.1
+     * @param header              The Header of RFC 1035, section 4.1
+     * @param questions           zero or more Questions of RFC 1035, section 4.1
+     * @param answers             List of answers according to RFC 1035, section 4.1.1
      * @param nameServerResources List of name server resources according to RFC 1035, section 4.1.1
      * @param additionalResources List of additional resources according to RFC 1035, section 4.1.1
      */
@@ -29,6 +30,13 @@ public class DnsMessage {
         this.additionalResources = additionalResources;
     }
 
+    /**
+     * @return byte array corresponding to the DnsMessage
+     */
+    public byte[] bytes() {
+
+        return byteList().asArray();
+    }
 
     /**
      * @return a list representing the message. This list can also be parsed into a message.
@@ -38,14 +46,6 @@ public class DnsMessage {
         ByteList allQuestions = new ByteList();
         questions.forEach(q -> allQuestions.addAll(q.asList()));
         return header.asList().append(allQuestions);
-    }
-
-    /**
-     * @return byte array corresponding to the DnsMessage
-     */
-    public byte[] bytes() {
-
-        return byteList().asArray();
     }
 
     public Header getHeader() {

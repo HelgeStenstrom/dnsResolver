@@ -92,11 +92,6 @@ public class ByteList extends ArrayList<Integer> {
         return result;
     }
 
-    boolean isPointer(int offset) {
-        var statusWord = subList(offset, offset + 2).u16(0);
-        return (statusWord & 0xc000) == 0xc000;
-    }
-
     /**
      * @return the list as a string of hexadecimal digits. Each pair of digits is one item in the list.
      */
@@ -105,27 +100,6 @@ public class ByteList extends ArrayList<Integer> {
                 .map(intValue -> String.format("%02x", intValue))
                 .collect(Collectors.joining());
     }
-
-    @Override
-    public ByteList subList(int fromIndex, int toIndex) {
-        List<Integer> subList = super.subList(fromIndex, toIndex);
-        ByteList result = new ByteList();
-
-        result.addAll(subList);
-
-        return result;
-    }
-
-    /**
-     * Treat the first two ints of the list as MSB and LSB. Concatenate to a 16-bit word.
-     *
-     * @param index index of the most significant byte of the returned value.
-     * @return an unsigned integer U16
-     */
-    public int u16(int index) {
-        return (this.get(index) << 8) | this.get(index + 1);
-    }
-
 
     /**
      * Treat the first four ints of the list as bytes of a 32-bit word. Concatenate to a 32-bit word.
@@ -153,6 +127,31 @@ public class ByteList extends ArrayList<Integer> {
 
         Integer value = ((this.get(offset) & 0x3f) << 8) | (this.get(offset + 1) & 0xff);
         return Optional.of(value);
+    }
+
+    boolean isPointer(int offset) {
+        var statusWord = subList(offset, offset + 2).u16(0);
+        return (statusWord & 0xc000) == 0xc000;
+    }
+
+    /**
+     * Treat the first two ints of the list as MSB and LSB. Concatenate to a 16-bit word.
+     *
+     * @param index index of the most significant byte of the returned value.
+     * @return an unsigned integer U16
+     */
+    public int u16(int index) {
+        return (this.get(index) << 8) | this.get(index + 1);
+    }
+
+    @Override
+    public ByteList subList(int fromIndex, int toIndex) {
+        List<Integer> subList = super.subList(fromIndex, toIndex);
+        ByteList result = new ByteList();
+
+        result.addAll(subList);
+
+        return result;
     }
 
     /**

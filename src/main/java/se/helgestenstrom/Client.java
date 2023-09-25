@@ -13,8 +13,8 @@ import java.util.stream.Stream;
  */
 public class Client {
 
-    private final DatagramSocket socket;
     private final InetAddress address;
+    private final DatagramSocket socket;
 
 
     /**
@@ -28,11 +28,11 @@ public class Client {
     }
 
     /**
+     * @param numericalId      the ID that should go out with the DNS message, and is expected to come back.
+     * @param recursionDesired flag of the Header; true if recursion is desired.
+     * @param host             who to look up.
      * @return the response from a DNS server
      * @throws IOException if there are problems
-     * @param numericalId the ID that should go out with the DNS message, and is expected to come back.
-     * @param recursionDesired flag of the Header; true if recursion is desired.
-     * @param host who to look up.
      */
     public String sendSomething(int numericalId, boolean recursionDesired, String host) throws IOException {
 

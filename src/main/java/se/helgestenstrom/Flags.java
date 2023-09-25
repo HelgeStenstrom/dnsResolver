@@ -13,31 +13,12 @@ public class Flags {
 
     /**
      * Constructor that supports only a single flag of all available.
+     *
      * @param recursionDesired True if recursion is desired.
      */
     public Flags(boolean recursionDesired) {
 
         bitField = makeBitField(false, false, recursionDesired);
-    }
-
-    private Flags(Flags.Builder builder) {
-
-        bitField = makeBitField(builder.isResponse, builder.isAuthoritative, builder.recursionDesired);
-    }
-
-    /**
-     * @param bitField a 16-bit integer representing the flags according to the spec.
-     */
-    public Flags(int bitField) {
-        this.bitField = bitField;
-    }
-
-
-    /**
-     * @return the flag as a list of 2 bytes
-     */
-    public ByteList asList() {
-        return ByteList.u16FromInt(bitField);
     }
 
     private int makeBitField(boolean isResponse, boolean isAuthoritative, boolean recursionDesired) {
@@ -46,12 +27,32 @@ public class Flags {
                 | (recursionDesired ? 1 : 0) << 8;
     }
 
+    private Flags(Flags.Builder builder) {
+
+        bitField = makeBitField(builder.isResponse, builder.isAuthoritative, builder.recursionDesired);
+    }
+
+
+    /**
+     * @param bitField a 16-bit integer representing the flags according to the spec.
+     */
+    public Flags(int bitField) {
+        this.bitField = bitField;
+    }
+
+    /**
+     * @return the flag as a list of 2 bytes
+     */
+    public ByteList asList() {
+        return ByteList.u16FromInt(bitField);
+    }
+
     public boolean isQuery() {
         return !isResponse();
     }
 
     public boolean isResponse() {
-        return (bitField & 0x8000) !=0;
+        return (bitField & 0x8000) != 0;
     }
 
     public int getOpcode() {
@@ -59,19 +60,19 @@ public class Flags {
     }
 
     public boolean isAuthoritative() {
-        return (bitField >> 10 & 1) !=0;
+        return (bitField >> 10 & 1) != 0;
     }
 
     public boolean isTruncated() {
-        return (bitField >> 9 & 1) !=0;
+        return (bitField >> 9 & 1) != 0;
     }
 
     public boolean isRecursionDesired() {
-        return  (bitField >> 8 & 1) !=0;
+        return (bitField >> 8 & 1) != 0;
     }
 
     public boolean isRecursionAvailable() {
-        return (bitField >> 7 & 1) !=0;
+        return (bitField >> 7 & 1) != 0;
     }
 
     public RCode getRCode() {

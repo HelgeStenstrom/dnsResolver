@@ -6,13 +6,12 @@ package se.helgestenstrom;
  */
 public class Header {
 
-    private final Id id;
-
-    private final Flags flags;
-    private final int qdCount;
     private final int anCount;
-    private final int nsCount;
     private final int arCount;
+    private final Flags flags;
+    private final Id id;
+    private final int nsCount;
+    private final int qdCount;
 
     /**
      * @param id      A 16-bit identifier assigned by the program that generates any kind of query.

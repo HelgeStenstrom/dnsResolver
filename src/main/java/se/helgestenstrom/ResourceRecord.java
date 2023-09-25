@@ -12,11 +12,11 @@ public class ResourceRecord {
 
 
     /**
-     * @param name typically a domain name.
-     * @param type u16 of the type according to RFC 1035, section 4.1.3
+     * @param name       typically a domain name.
+     * @param type       u16 of the type according to RFC 1035, section 4.1.3
      * @param rDataClass u16 of the class according to RFC 1035, section 4.1.3
      * @param timeToLive u16 of the TTL, Time to Live, according to RFC 1035, section 4.1.3
-     * @param rData the RDATA according to RFC 1035, section 4.1.3
+     * @param rData      the RDATA according to RFC 1035, section 4.1.3
      */
     public ResourceRecord(Name name, int type, int rDataClass, long timeToLive, ByteList rData) {
         this.name = name;

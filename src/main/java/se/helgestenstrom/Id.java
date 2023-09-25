@@ -3,12 +3,13 @@ package se.helgestenstrom;
 /**
  * Represents the ID number of a message
  */
-public class Id  {
+public class Id {
 
     private final int number;
 
     /**
      * Create an instance
+     *
      * @param number ID number
      */
     public Id(int number) {

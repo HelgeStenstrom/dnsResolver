@@ -7,16 +7,14 @@ import java.util.List;
  */
 public class Question {
 
-    private final Name name;
-
     private final int classInt;
-
+    private final Name name;
     private final int typeInt;
 
 
     /**
-     * @param qName usually a domain or host string with dots.
-     * @param qType The type according to RFC 1035
+     * @param qName  usually a domain or host string with dots.
+     * @param qType  The type according to RFC 1035
      * @param qClass The class according to RFC 1035
      */
     public Question(Name qName, int qType, int qClass) {
@@ -24,7 +22,6 @@ public class Question {
         this.typeInt = qType;
         this.classInt = qClass;
     }
-
 
 
     /**
