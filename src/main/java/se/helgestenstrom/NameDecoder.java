@@ -47,21 +47,26 @@ public class NameDecoder {
     }
 
     private Name nameFrom(ByteList bytes) {
-        var pointer = 0;
+        Optional<Integer> maybePointer = bytes.pointerValue(0);
+        if (maybePointer.isPresent()) {
+            throw new UnsupportedOperationException();
+            // TODO: write test that exposes this problem. Make name decoding always use the whole received byte list.
+        }
+        var index = 0;
 
-        int partLength = bytes.get(pointer);
+        int partLength = bytes.get(index);
         List<String> collector = new ArrayList<>();
         while (partLength != 0) {
 
-            var piece = bytes.subList(pointer + 1, pointer + 1 + partLength);
+            var piece = bytes.subList(index + 1, index + 1 + partLength);
             var collect = piece.stream()
                     .map(c -> (char) c.intValue())
                     .map(Object::toString)
                     .collect(Collectors.joining());
 
             collector.add(collect);
-            pointer += partLength + 1;
-            partLength = bytes.get(pointer);
+            index += partLength + 1;
+            partLength = bytes.get(index);
         }
 
         String collect = String.join(".", collector);
