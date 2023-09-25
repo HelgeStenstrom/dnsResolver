@@ -36,10 +36,10 @@ class ClientTest {
     @Test
     void sendAndReceiveWithRecursion() throws IOException {
 
-        String returned = client.sendSomething(0xabcd, true, "dns.google.com");
+        String returned = client.sendSomething(0xdead, true, "dns.google.com");
 
         // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
-        assertEquals("abcd", returned.substring(0, 4));
+        assertEquals("dead", returned.substring(0, 4));
 
         ByteList byteList = ByteList.of(returned);
         Decoder decoder = new Decoder(byteList);
@@ -47,7 +47,7 @@ class ClientTest {
         Header header = dnsMessage.getHeader();
         int id = header.getId().id();
 
-        assertEquals(0xabcd, id);
+        assertEquals(0xdead, id);
         List<ResourceRecord> answers = dnsMessage.getAnswers();
 
         List<String> answerNames = answers.stream().map(ResourceRecord::getNameString).toList();
@@ -65,6 +65,8 @@ class ClientTest {
 //                , Arguments.of(false, "dns.google.com")
 //                , Arguments.of(true, "dns.google.com")
 //                , Arguments.of(false, "dns.google.com")
+                , Arguments.of(true, "www.bp.com")
+                , Arguments.of(false, "www.bp.com")
                 , Arguments.of(false, "198.41.0.4")
         );
     }
@@ -73,10 +75,10 @@ class ClientTest {
     @MethodSource("parameters")
     void sendAndReceiveWithoutRecursion(boolean recursionDesired, String host) throws IOException {
 
-        String returned = client.sendSomething(0xabcd, recursionDesired, host);
+        String returned = client.sendSomething(0xdead, recursionDesired, host);
 
         // The ID part is in the same position, and is expected to have the same value as was sent to the DNS.
-        assertEquals("abcd", returned.substring(0, 4));
+        assertEquals("dead", returned.substring(0, 4));
 
         ByteList byteList = ByteList.of(returned);
         Decoder decoder = new Decoder(byteList);
@@ -84,7 +86,7 @@ class ClientTest {
         Header header = dnsMessage.getHeader();
         int id = header.getId().id();
 
-        assertEquals(0xabcd, id);
+        assertEquals(0xdead, id);
         List<ResourceRecord> answers = dnsMessage.getAnswers();
 
         List<String> answerNames = answers.stream().map(ResourceRecord::getNameString).toList();
