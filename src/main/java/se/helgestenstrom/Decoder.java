@@ -18,7 +18,7 @@ public class Decoder {
     public Decoder(ByteList encoded) {
         this.encoded = encoded;
 
-        nameDecoder = new NameDecoder();
+        nameDecoder = new NameDecoder(encoded);
     }
 
     public DnsMessage getDnsMessage() {
@@ -95,7 +95,7 @@ public class Decoder {
         int nextIndex = startingPoint;
         for (int i = 0; i < qdCount; i++) {
 
-            ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
+            ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(nextIndex);
 
             int nextIndex1 = nameParseResult.getNextIndex();
             int qt = encoded.u16(nextIndex1);
@@ -108,7 +108,7 @@ public class Decoder {
     }
 
     private ParseResult<ResourceRecord> getOneRecord(int nextIndex) {
-        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(encoded, nextIndex);
+        ParseResult<Name> nameParseResult = nameDecoder.nameAndNext(nextIndex);
         Name name = nameParseResult.getResult();
         int nextIndex1 = nameParseResult.getNextIndex();
         int type = encoded.u16(nextIndex1);

@@ -11,19 +11,36 @@ import java.util.stream.Collectors;
 public class NameDecoder {
 
 
+    private final ByteList encoded;
+
     /**
-     * @param encoded    A message to be parsed
+     * @param encoded The complete message that contains names to be decoded (and other stuff)
+     */
+    public NameDecoder(ByteList encoded) {
+        this.encoded = encoded;
+    }
+
+    /**
      * @param startIndex The position in the message, where to start.
      * @return a Name and a start position for continued parsing
      */
-    public ParseResult<Name> nameAndNext(ByteList encoded, int startIndex) {
+    public ParseResult<Name> nameAndNext(int startIndex) {
+        Integer firstByte = encoded.get(startIndex);
+        boolean isCount = (1 <= firstByte && firstByte <= 63);
+        boolean isEndIndicator = firstByte == 0;
+        boolean isPointerFirstByte = firstByte >= 192;
+
+        if (isCount) {
+            // nothing yet
+        }
+
         Optional<Integer> maybePointer = encoded.pointerValue(startIndex);
         if (maybePointer.isPresent()) {
-            Name name = nameFrom(encoded, maybePointer.get());
+            Name name = nameFrom(maybePointer.get());
             int consumed = 2;
             return new ParseResult<>(name, startIndex + consumed);
         } else {
-            Name name = nameFrom(encoded, startIndex);
+            Name name = nameFrom(startIndex);
             int consumedByLabels = name.labels().stream().mapToInt(String::length).sum();
             int consumedLengthPrefix = name.labels().size();
             int consumedByEndingZero = 1;
@@ -37,28 +54,20 @@ public class NameDecoder {
      * @param offset   Point in the sequence from which to start the decoding
      * @return an instance of {@link Name}
      */
-    private Name nameFrom(ByteList byteList, int offset) {
+    private Name nameFrom(int offset) {
+        ByteList byteList = encoded;
         var isPointer = byteList.pointerValue(offset);
         if (isPointer.isPresent()) {
-            return nameFrom(byteList, isPointer.get());
+            return nameFrom(isPointer.get());
         }
-        var partial = byteList.subList(offset, byteList.size());
-        return nameFrom(partial);
-    }
 
-    private Name nameFrom(ByteList bytes) {
-        Optional<Integer> maybePointer = bytes.pointerValue(0);
-        if (maybePointer.isPresent()) {
-            throw new UnsupportedOperationException();
-            // TODO: write test that exposes this problem. Make name decoding always use the whole received byte list.
-        }
-        var index = 0;
+        var index = offset;
 
-        int partLength = bytes.get(index);
+        int partLength = byteList.get(index);
         List<String> collector = new ArrayList<>();
-        while (partLength != 0) {
+        while (partLength != 0 && byteList.pointerValue(index).isEmpty()) {
 
-            var piece = bytes.subList(index + 1, index + 1 + partLength);
+            var piece = byteList.subList(index + 1, index + 1 + partLength);
             var collect = piece.stream()
                     .map(c -> (char) c.intValue())
                     .map(Object::toString)
@@ -66,11 +75,12 @@ public class NameDecoder {
 
             collector.add(collect);
             index += partLength + 1;
-            partLength = bytes.get(index);
+            partLength = byteList.get(index);
         }
 
         String collect = String.join(".", collector);
 
         return new Name(collect);
     }
+
 }

@@ -100,6 +100,27 @@ The pointer refers to the stream/list of octets/bytes.
 The first pointer that makes sense is 12, since the header section is 12 bytes long,
 and the first question section starts after it.
 
+According to https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.4,
+names consist of a sequence of labels. In the decoded name, the labels are
+separated by periods. When decoding a name, we start with an initial byte.
+This takes three forms:
+
+- It's >= 192; The two most significant bits are set. The rest of this byte,
+  plus the following now is to be interpreted as a pointer to a place in the
+  message byte-stream, where a label is to start. The pointed-to label can,
+  like this one, be either a label-length indicator or a pointer itself.
+- It's in the range 1-63. The value tells how many of the following bytes
+  are to be taken as characters of the label. For example, if the label is
+  "abcd", the length-indicator is 4, and it's followed by the ascii values
+  of a, b, c and d in order.
+- It's 0. There are no more labels in this name. It doesn't represent a
+  length-zero label; it represents the absence of a label.
+- Values in the range 64-191 are not permitted. They are reserved for future
+  use.
+  - Can utf-8 character that are not in ascii be used in domain names?
+    Probably not.
+
+Thus, we can implement this as a recursive function.
 
 # Creating a UDP socket
 
