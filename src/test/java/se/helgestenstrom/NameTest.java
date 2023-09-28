@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NameTest {
 
@@ -51,6 +52,11 @@ class NameTest {
         assertEquals(expected, name.getLabels());
     }
 
+    @Test
+    void emptyName() {
+        var name = new Name("");
+        assertTrue(name.getLabels().isEmpty());
+    }
 
 
 

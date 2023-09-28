@@ -117,4 +117,12 @@ class FlagsTest {
         assertEquals(RCode.Refused, new Flags(5).getRCode());
     }
 
+    @Test
+    void testToString() {
+
+        assertTrue(new Flags(0).toString().contains("Query"));
+        assertFalse(new Flags(0xffff).toString().contains("Query"));
+        assertTrue(new Flags(0xffff).toString().contains("Response"));
+    }
+
 }

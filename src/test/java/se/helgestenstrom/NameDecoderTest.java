@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NameDecoderTest {
 
@@ -98,7 +99,16 @@ class NameDecoderTest {
 
         // Verify
         assertEquals("w.a.c", wacDecoded.getResult().toString());
+    }
 
+    @Test
+    void illegalCharacter() {
+
+        // Setup
+        List<Integer> encoded = List.of(64);
+        NameDecoder nameDecoder = new NameDecoder(new ByteList(encoded));
+
+        assertThrows(IllegalArgumentException.class, () -> nameDecoder.nameAndNext(0));
 
     }
 

@@ -38,6 +38,11 @@ public class ResourceRecord {
         return rDataClass;
     }
 
+    @Override
+    public String toString() {
+        return "Record %s t=%s".formatted(name.toString(), Type.code(type).getDescription());
+    }
+
     public long getTimeToLive() {
         return timeToLive;
     }
