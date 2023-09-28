@@ -41,7 +41,7 @@ public class Question {
     }
 
     public List<String> getLabels() {
-        return name.labels();
+        return name.getLabels();
     }
 
     public int getType() {

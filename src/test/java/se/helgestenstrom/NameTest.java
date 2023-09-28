@@ -48,7 +48,7 @@ class NameTest {
         var name = new Name(raw);
 
         List<String> expected = List.of("abc", "def");
-        assertEquals(expected, name.labels());
+        assertEquals(expected, name.getLabels());
     }
 
 
