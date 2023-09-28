@@ -2,7 +2,6 @@ package se.helgestenstrom;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,55 +31,37 @@ public class NameDecoder {
 
         if (isCount) {
             // nothing yet
-        }
+            ParseResult<String> label = labelFrom(startIndex);
+            ParseResult<Name> rest = nameAndNext(label.getNextIndex());
+            List<String> followingLabels = rest.getResult().labels();
+            String thisLabel = label.getResult();
+            List<String> allLabels = new ArrayList<>();
+            allLabels.add(thisLabel);
+            allLabels.addAll(followingLabels);
 
-        Optional<Integer> maybePointer = encoded.pointerValue(startIndex);
-        if (maybePointer.isPresent()) {
-            Name name = nameFrom(maybePointer.get());
-            int consumed = 2;
-            return new ParseResult<>(name, startIndex + consumed);
-        } else {
-            Name name = nameFrom(startIndex);
-            int consumedByLabels = name.labels().stream().mapToInt(String::length).sum();
-            int consumedLengthPrefix = name.labels().size();
-            int consumedByEndingZero = 1;
-            int consumed = consumedByLabels + consumedLengthPrefix + consumedByEndingZero;
-            return new ParseResult<>(name, startIndex + consumed);
-        }
+            String nameString = String.join(".", allLabels);
+
+            return new ParseResult<>(new Name(nameString), rest.getNextIndex());
+        } else if (isEndIndicator) {
+            return new ParseResult<>(new Name(""), startIndex + 1);
+        } else if (isPointerFirstByte) {
+            int nextIndex = startIndex + 2; // The pointer takes 2 bytes
+            int pointsTo = encoded.pointerValue(startIndex).orElseThrow();
+            ParseResult<Name> followingResult = nameAndNext(pointsTo);
+            return new ParseResult<>(followingResult.getResult(), nextIndex);
+        } else throw new IllegalArgumentException("Programming error, or illegal character.");
+
+
     }
 
-    /**
-     * @param byteList Sequence to be decoded into a {@link Name}
-     * @param offset   Point in the sequence from which to start the decoding
-     * @return an instance of {@link Name}
-     */
-    private Name nameFrom(int offset) {
-        ByteList byteList = encoded;
-        var isPointer = byteList.pointerValue(offset);
-        if (isPointer.isPresent()) {
-            return nameFrom(isPointer.get());
-        }
-
-        var index = offset;
-
-        int partLength = byteList.get(index);
-        List<String> collector = new ArrayList<>();
-        while (partLength != 0 && byteList.pointerValue(index).isEmpty()) {
-
-            var piece = byteList.subList(index + 1, index + 1 + partLength);
-            var collect = piece.stream()
-                    .map(c -> (char) c.intValue())
-                    .map(Object::toString)
-                    .collect(Collectors.joining());
-
-            collector.add(collect);
-            index += partLength + 1;
-            partLength = byteList.get(index);
-        }
-
-        String collect = String.join(".", collector);
-
-        return new Name(collect);
+    private ParseResult<String> labelFrom(int startIndex) {
+        Integer count = encoded.get(startIndex);
+        ByteList subList = encoded.subList(startIndex + 1, startIndex + count + 1);
+        String collect = subList.stream()
+                .map(c -> (char) c.intValue())
+                .map(Object::toString)
+                .collect(Collectors.joining());
+        return new ParseResult<>(collect, startIndex + count + 1);
     }
 
 }

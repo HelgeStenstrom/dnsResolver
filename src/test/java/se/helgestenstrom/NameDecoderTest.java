@@ -75,10 +75,10 @@ class NameDecoderTest {
     @Test
     void linkingProlongsAName() {
         // Setup
-        List<Integer> ignoredPrefix = List.of(7, 7, 7);
+        List<Integer> ignoredPrefix = List.of(7, 7, 7, 5, 6, 7);
         List<Integer> acName = List.of(1, (int) 'a', 1, (int) 'c', 0);
-        int pointerToAcName = 5;
-        List<Integer> wacName = List.of(1, (int) 'w', 0xc0, pointerToAcName);
+        int startIndexOfFirstName = ignoredPrefix.size();
+        List<Integer> wacName = List.of(1, (int) 'w', 0xc0, startIndexOfFirstName);
 
         List<Integer> encodedNames = Stream.of(ignoredPrefix, acName, wacName)
                 .flatMap(Collection::stream).toList();
@@ -87,7 +87,7 @@ class NameDecoderTest {
         NameDecoder nameDecoder = new NameDecoder(encoded);
 
         // Exercise 1
-        var acDecoded = nameDecoder.nameAndNext(3);
+        var acDecoded = nameDecoder.nameAndNext(startIndexOfFirstName);
 
         // Verify
         assertEquals("a.c", acDecoded.getResult().toString());
@@ -95,6 +95,8 @@ class NameDecoderTest {
         // Exercise 2
         int nextIndex = acDecoded.getNextIndex();
         var wacDecoded = nameDecoder.nameAndNext(nextIndex);
+
+        // Verify
         assertEquals("w.a.c", wacDecoded.getResult().toString());
 
 
